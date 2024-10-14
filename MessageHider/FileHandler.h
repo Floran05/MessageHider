@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Windows.h>
+#include <vector>
+
 class FileHandler
 {
 public:
@@ -9,8 +12,8 @@ public:
 
 public:
 
-	unsigned char* ReadBitmap(const WCHAR* filename);
-	void WriteBitmap(const unsigned char* data);
+	BYTE* ReadBitmap(const char* filename, BITMAPINFOHEADER& infoHeader);
+	void WriteBitmap(const char* filename, BYTE* pixels, BITMAPINFOHEADER& infoHeader);
 
 };
 
