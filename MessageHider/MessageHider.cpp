@@ -3,6 +3,8 @@
 
 #include "framework.h"
 #include "MessageHider.h"
+#include <windows.h>
+#include <shellapi.h>
 
 #define MAX_LOADSTRING 100
 
@@ -134,6 +136,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
+            case ID_AIDE_LACHANSONOFFICIELLE:
+                ShellExecute(0, 0, L"https://www.youtube.com/watch?v=zBbSH-w6L_8", 0, 0, SW_SHOW);
+            case ID_FICHIER_CRYPTERUNEIMAGE:
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_OLE_PROPPAGE_LARGE), hWnd, About);
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
