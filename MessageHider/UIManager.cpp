@@ -28,7 +28,28 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
-        // TODO: Ajoutez ici le code de dessin qui utilise hdc...
+
+
+        // Taille du rectangle
+        int rectWidth = 200;
+        int rectHeight = 150;
+
+        // Récupérer la taille de la fenêtre
+        RECT clientRect;
+        GetClientRect(hWnd, &clientRect);
+        int windowWidth = clientRect.right - clientRect.left;
+        int windowHeight = clientRect.bottom - clientRect.top;
+
+        // Calculer les coordonnées pour centrer le rectangle
+        int x = (windowWidth - rectWidth) / 2;
+        int y = (windowHeight - rectHeight) / 2;
+
+        x += 100;
+        y -= 100;
+
+        // Dessiner le contour du rectangle centré
+        Rectangle(hdc, x, y, x + rectWidth, y + rectHeight);
+
         EndPaint(hWnd, &ps);
     }
     break;
