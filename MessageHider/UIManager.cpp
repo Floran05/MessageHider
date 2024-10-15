@@ -4,9 +4,43 @@
 void UIManager::Init()
 {
     UIManager::pImage = nullptr;
-    std::wstring name(L"C:/Users/BN/Downloads/ARTICLE-INOX.jpg");
-    const wchar_t* szName = name.c_str();
-    pImage = new Image(szName);
+}
+
+void UIManager::LoadImage()
+{
+
+    OPENFILENAME ofn;       
+    WCHAR szFile[260];     
+
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = GetActiveWindow();
+    ofn.lpstrFile = szFile;
+    ofn.lpstrFile[0] = '\0';
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = L"Images (*.bmp;*.jpg;*.jpeg;*.png)\0*.bmp;*.jpg;*.jpeg;*.png\0Tous les fichiers (*.*)\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = nullptr;
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = nullptr;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+
+    if (GetOpenFileName(&ofn)) {
+        delete pImage; 
+        pImage = new Gdiplus::Image(ofn.lpstrFile); 
+
+        HWND hWnd = GetActiveWindow(); 
+        InvalidateRect(hWnd, nullptr, TRUE); 
+    }
+
+
+
+    //redraw
+    HWND hWnd = GetActiveWindow(); 
+    InvalidateRect(hWnd, nullptr, TRUE); 
+
+
 }
 
 INT_PTR UIManager::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -36,7 +70,11 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
-        // Analyse les sélections de menu :
+        if (wmId == 1) 
+        {
+            this->LoadImage(); 
+        }
+        break;
         switch (wmId)
         {
         case IDM_ABOUT:
@@ -56,8 +94,8 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         HDC hdc = BeginPaint(hWnd, &ps);
 
         // Taille du rectangle
-        int rectWidth = 200;
-        int rectHeight = 150;
+        int rectWidth = 300;
+        int rectHeight = 200;
 
         // Récupérer la taille de la fenêtre
         RECT clientRect;
@@ -80,12 +118,12 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
             int newHeight; // Déclarer newHeight ici
 
             if (aspectRatio > static_cast<float>(rectWidth) / static_cast<float>(rectHeight)) {
-                newWidth = rectWidth;
-                newHeight = static_cast<int>(rectWidth / aspectRatio);
+                newWidth = rectWidth-2;
+                newHeight = static_cast<int>(rectWidth / aspectRatio)-2;
             }
             else {
-                newHeight = rectHeight;
-                newWidth = static_cast<int>(rectHeight * aspectRatio);
+                newHeight = rectHeight-2;
+                newWidth = static_cast<int>(rectHeight * aspectRatio)-2;
             }
 
             // Calculer la position pour centrer l'image

@@ -1,5 +1,6 @@
 #pragma once
 #include "framework.h"
+#include <commdlg.h>
 #include "MessageHider.h"
 #include <objidl.h>
 #include <gdiplus.h>
@@ -16,6 +17,9 @@ public:
 	UIManager() = default;
 
 	void Init();
+	void LoadImage();
+
+
 	LRESULT CALLBACK ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HINSTANCE hInst);
 	static INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 };

@@ -118,6 +118,21 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     {
         return FALSE;
     }
+    HWND hButton = CreateWindow(
+        L"BUTTON",  // Type de contrôle
+        L"Charger une image", // Texte du bouton
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Styles du bouton
+        10,         // Position x
+        10,         // Position y
+        100,        // Largeur
+        30,         // Hauteur
+        hWnd,       // Handle de la fenêtre parente
+        (HMENU)1,   // Identifiant du bouton
+        (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+        nullptr);   // Pas de paramètre supplémentaire
+
+    ShowWindow(hButton, nCmdShow); // Afficher le bouton
+
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
