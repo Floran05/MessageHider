@@ -5,6 +5,12 @@
 #include "MessageHider.h"
 #include "UIManager.h"
 
+#include <objidl.h>
+#include <gdiplus.h>
+#pragma comment (lib, "Gdiplus.lib")
+
+using namespace Gdiplus;
+
 #define MAX_LOADSTRING 100
 
 // Variables globales :
@@ -28,7 +34,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
+    GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken;
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+
     UiManager = new UIManager();
+    UiManager->Init();
 
     // TODO: Placez le code ici.
 
@@ -56,7 +67,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
-
+    GdiplusShutdown(gdiplusToken);
     return (int)msg.wParam;
 }
 
