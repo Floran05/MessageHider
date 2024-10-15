@@ -113,6 +113,7 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
 
+
         // Taille du rectangle
         int rectWidth = 300;
         int rectHeight = 200;
@@ -120,6 +121,8 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         // Récupérer la taille de la fenêtre
         RECT clientRect;
         GetClientRect(hWnd, &clientRect);
+
+
         int windowWidth = clientRect.right - clientRect.left;
         int windowHeight = clientRect.bottom - clientRect.top;
 
@@ -184,7 +187,6 @@ void UIManager::CreateButtons(HWND hWnd) {
         (HMENU)2,  // Button ID
         nullptr,  // Instance handle
         nullptr); // No additional parameters
-
     // Créer le bouton "Crypter"
     hEncryptButton = CreateWindow(
         L"BUTTON",  // Class name
