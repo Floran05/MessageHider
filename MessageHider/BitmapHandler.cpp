@@ -21,6 +21,11 @@ BYTE* BitmapHandler::Read(const char* filename)
 		return new BYTE[0];
 	}
 
+	return Read(handleBitmap);
+}
+
+BYTE* BitmapHandler::Read(HBITMAP& handleBitmap)
+{
 	BITMAP bitmap;
 	if (!GetObject(handleBitmap, sizeof(BITMAP), &bitmap))
 	{

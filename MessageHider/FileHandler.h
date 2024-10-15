@@ -27,4 +27,8 @@ public:
 	virtual BYTE* Read(const char* filename) = 0;
 	virtual void Write(const char* filename, BYTE* pixels) = 0;
 
+	static WCHAR* ConvertToWide(const char* charStr);
+
 };
+
+//01000000 00000000 00010011

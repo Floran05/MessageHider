@@ -43,3 +43,11 @@ void FileHandler::OrderRGBComponents(BYTE* pixels, const std::string& fromOrder)
 		pixels[i * componentsCount + 2] = components.B;
 	}
 }
+
+WCHAR* FileHandler::ConvertToWide(const char* charStr)
+{
+	int size = MultiByteToWideChar(CP_UTF8, 0, charStr, -1, NULL, 0);
+	WCHAR* wideStr = new WCHAR[size];
+	MultiByteToWideChar(CP_UTF8, 0, charStr, -1, wideStr, size);
+	return wideStr;
+}

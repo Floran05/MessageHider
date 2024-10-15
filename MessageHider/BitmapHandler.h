@@ -16,8 +16,9 @@ private:
 
 public:
 
-	virtual BYTE* Read(const char* filename);
-	virtual void Write(const char* filename, BYTE* pixels);
+	virtual BYTE* Read(const char* filename) override;
+	virtual BYTE* Read(HBITMAP& handleBitmap);
+	virtual void Write(const char* filename, BYTE* pixels) override;
 
 	BITMAPINFOHEADER& GetLastLoadedFileHeader() { return lastLoadedFileHeader; }
 
