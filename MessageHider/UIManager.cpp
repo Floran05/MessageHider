@@ -34,7 +34,8 @@ void UIManager::LoadImage()
         InvalidateRect(hWnd, nullptr, TRUE); 
         // Créer et afficher les boutons
         CreateButtons(hWnd);
-        ShowButtons();
+        CreateTextBox(hWnd);
+        ShowControls();
 
     }
 
@@ -77,15 +78,21 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
         switch (wmId)
         {
-        case 1: 
+        case 1: // Identifiant du bouton "Load Image"
             this->LoadImage();
             break;
-        case 2: 
-            MessageBox(hWnd, L"Décrypter cliqué", L"Info", MB_OK);
-            break;
-        case 3: 
-            MessageBox(hWnd, L"Crypter cliqué", L"Info", MB_OK);
-            break;
+        case 2: // Identifiant du bouton "Décrypter"
+        {
+            std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
+            MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
+        }
+        break;
+        case 3: // Identifiant du bouton "Crypter"
+        {
+            std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
+            MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
+        }
+        break;
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;
@@ -189,15 +196,46 @@ void UIManager::CreateButtons(HWND hWnd) {
         nullptr); // No additional parameters
 }
 
-void UIManager::ShowButtons() {
+void UIManager::ShowControls() {
     ShowWindow(hDecryptButton, SW_SHOW);
     ShowWindow(hEncryptButton, SW_SHOW);
+    ShowWindow(hTextBox, SW_SHOW); // Afficher la zone de texte
 }
 
-void UIManager::HideButtons() {
+void UIManager::HideControls() {
     ShowWindow(hDecryptButton, SW_HIDE);
     ShowWindow(hEncryptButton, SW_HIDE);
+    ShowWindow(hTextBox, SW_HIDE); // Cacher la zone de texte
 }
+
+std::wstring UIManager::GetTextBoxContent() {
+    WCHAR buffer[256]; // Buffer pour stocker le contenu
+    GetWindowText(hTextBox, buffer, sizeof(buffer) / sizeof(WCHAR)); // Récupérer le texte
+    return std::wstring(buffer); // Convertir en wstring et retourner
+}
+
+
+void UIManager::CreateTextBox(HWND hWnd) {
+    // Créer la zone de texte
+    hTextBox = CreateWindowEx(
+        WS_EX_CLIENTEDGE,  // Style étendu
+        L"EDIT",           // Class name
+        L"",               // Initial text
+        WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL, // Styles
+        20,               // Position X
+        150,              // Position Y
+        300,              // Width
+        100,              // Height
+        hWnd,             // Parent window
+        (HMENU)4,        // ID de la zone de texte
+        nullptr,         // Instance handle
+        nullptr);        // No additional parameters
+}
+
+
+
+
+
 
 
 

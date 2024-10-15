@@ -1,5 +1,6 @@
 #pragma once
 #include "framework.h"
+#include <string>
 #include <commdlg.h>
 #include "MessageHider.h"
 #include <objidl.h>
@@ -13,15 +14,18 @@ public:
 
 	HWND hDecryptButton;
 	HWND hEncryptButton;
+	HWND hTextBox; 
 	Image* pImage;
 
 	UIManager() = default;
 
 	void Init();
 	void LoadImage();
-	void CreateButtons(HWND hWnd); 
-	void ShowButtons(); 
-	void HideButtons();
+	void CreateButtons(HWND hWnd);
+	void CreateTextBox(HWND hWnd); 
+	void ShowControls(); 
+	void HideControls(); 
+	std::wstring GetTextBoxContent();
 
 
 	LRESULT CALLBACK ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HINSTANCE hInst);
