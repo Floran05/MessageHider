@@ -98,12 +98,16 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
             break;
         case IDM_EXIT:
             DestroyWindow(hWnd);
-            break;
+            break;    
+        case ID_AIDE_LACHANSONOFFICIELLE:
+                ShellExecute(0, 0, L"https://www.youtube.com/watch?v=zBbSH-w6L_8", 0, 0, SW_SHOW);
+                break;
+
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
     }
-    break;
+    break;            
     case WM_PAINT:
     {
         PAINTSTRUCT ps;

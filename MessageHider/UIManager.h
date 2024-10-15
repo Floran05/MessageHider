@@ -2,6 +2,8 @@
 #include "framework.h"
 #include <string>
 #include <commdlg.h>
+#include <windows.h>
+#include <shellapi.h>
 #include "MessageHider.h"
 #include <objidl.h>
 #include <gdiplus.h>
