@@ -18,9 +18,10 @@ public:
 
 	virtual BYTE* Read(const char* filename) override;
 	virtual BYTE* Read(HBITMAP& handleBitmap);
-	virtual void Write(const char* filename, BYTE* pixels) override;
+	virtual void Write(const char* filename, BYTE* pixels = nullptr) override;
 
 	BITMAPINFOHEADER& GetLastLoadedFileHeader() { return lastLoadedFileHeader; }
+	static BYTE* InvertImage(const BYTE* pixels, int width, int height, int bytesPerPixel);
 
 };
 

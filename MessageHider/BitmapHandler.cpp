@@ -49,25 +49,20 @@ BYTE* BitmapHandler::Read(HBITMAP& handleBitmap)
 	lastLoadedFileHeader.biCompression = BI_RGB;
 	lastLoadedFileHeader.biSizeImage = bitmap.bmWidth * bitmap.bmHeight * (bitmap.bmBitsPixel / 8);
 
+	BYTE* pixels = new BYTE[lastLoadedFileHeader.biSizeImage];
+
 	mLastLoadedFileWidth = bitmap.bmWidth;
 	mLastLoadedFileHeight = bitmap.bmHeight;
 	mLastLoadedFileBitsPerPixel = bitmap.bmBitsPixel;
+	mLastLoadedFilePixels = pixels;
 
-	BYTE* pixels = new BYTE[lastLoadedFileHeader.biSizeImage];
-
-	//data[i * 4] = 255; // B
-	//data[i * 4 + 1] = 0; // G
-	//data[i * 4 + 2] = 0; // R
-
-	//data.resize(bitmap.bmWidth * bitmap.bmHeight * (bitmap.bmBitsPixel / 8));
 	BITMAPINFO bitmapInfo;
 	bitmapInfo.bmiHeader = lastLoadedFileHeader;
-	if (!GetDIBits(hdc, handleBitmap, 0, bitmap.bmHeight, pixels/*data.data()*/, &bitmapInfo, DIB_RGB_COLORS))
+	if (!GetDIBits(hdc, handleBitmap, 0, bitmap.bmHeight, pixels, &bitmapInfo, DIB_RGB_COLORS))
 	{
 		std::cerr << "Impossible de récupérer les données de l'image" << std::endl;
 		DeleteDC(hdc);
 		DeleteObject(handleBitmap);
-		//data.clear();
 		return new BYTE[0];
 	}
 
@@ -78,6 +73,14 @@ BYTE* BitmapHandler::Read(HBITMAP& handleBitmap)
 
 void BitmapHandler::Write(const char* filename, BYTE* pixels)
 {
+	if (pixels == nullptr && mLastLoadedFilePixels == nullptr)
+	{
+		std::cerr << "Vous n'avez pas renseigné le tableau de pixels à sauvegarder dans l'image" << std::endl;
+		return;
+	}
+
+	if (pixels == nullptr) pixels = mLastLoadedFilePixels;
+
 	HANDLE file = CreateFileA(filename, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (file == INVALID_HANDLE_VALUE)
@@ -122,4 +125,20 @@ void BitmapHandler::Write(const char* filename, BYTE* pixels)
 		std::cerr << "Une erreur est survenue lors de la fermeture du fichier" << std::endl;
 		return;
 	}
+}
+
+BYTE* BitmapHandler::InvertImage(const BYTE* pixels, int width, int height, int bytesPerPixel)
+{
+	BYTE* inverted = new BYTE[width * height * bytesPerPixel];
+
+	int lineSize = width * bytesPerPixel;
+
+	for (int i = 0; i < height; ++i)
+	{
+		const BYTE* source = pixels + i * lineSize;
+		BYTE* target = inverted + (height - 1 - i) * lineSize;
+		std::copy(source, source + lineSize, target);
+	}
+
+	return inverted;
 }

@@ -1,7 +1,12 @@
 #include "FileHandler.h"
 
+#include <iostream>
+
+#include "Filter.h"
+
 FileHandler::FileHandler()
-	: mLastLoadedFileHeight(0)
+	: mLastLoadedFilePixels(nullptr)
+	, mLastLoadedFileHeight(0)
 	, mLastLoadedFileWidth(0)
 	, mLastLoadedFileBitsPerPixel(0)
 {
@@ -13,6 +18,14 @@ FileHandler::~FileHandler()
 
 void FileHandler::OrderRGBComponents(BYTE* pixels, const std::string& fromOrder)
 {
+	if (pixels == nullptr && mLastLoadedFilePixels == nullptr)
+	{
+		std::cerr << "Vous n'avez pas renseigné le tableau de pixels à modifier" << std::endl;
+		return;
+	}
+	
+	if (pixels == nullptr) pixels = mLastLoadedFilePixels;
+
 	int fileSize = mLastLoadedFileWidth * mLastLoadedFileHeight;
 	int componentsCount = mLastLoadedFileBitsPerPixel / 8;
 	struct{
@@ -50,4 +63,17 @@ WCHAR* FileHandler::ConvertToWide(const char* charStr)
 	WCHAR* wideStr = new WCHAR[size];
 	MultiByteToWideChar(CP_UTF8, 0, charStr, -1, wideStr, size);
 	return wideStr;
+}
+
+void FileHandler::AddFilter(Filter* newFilter)
+{
+	filters.emplace_back(newFilter);
+}
+
+void FileHandler::ApplyFilters()
+{
+	for (Filter* filter : filters)
+	{
+		filter->Apply(mLastLoadedFilePixels, mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileBitsPerPixel / 8);
+	}
 }

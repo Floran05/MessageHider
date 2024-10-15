@@ -1,5 +1,7 @@
 #include "PNGHandler.h"
 
+#include <vector>
+#include <iostream>
 #include <gdiplus.h>
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -11,6 +13,37 @@ PNGHandler::PNGHandler()
 
 PNGHandler::~PNGHandler()
 {
+}
+
+bool PNGHandler::GetEncoderClsid(const char* format, CLSID* cslid)
+{
+	UINT num = 0;
+	UINT size = 0;
+	Gdiplus::GetImageEncodersSize(&num, &size);
+	if (size == 0)
+	{
+		return false;
+	}
+
+	Gdiplus::ImageCodecInfo* imageCodecInfos = (Gdiplus::ImageCodecInfo*)(malloc(size));
+	if (imageCodecInfos == NULL)
+	{
+		return false;
+	}
+	Gdiplus::GetImageEncoders(num, size, imageCodecInfos);
+
+	for (UINT i = 0; i < num; i++)
+	{
+		if (wcscmp(imageCodecInfos[i].MimeType, FileHandler::ConvertToWide(format)) == 0)
+		{
+			*cslid = imageCodecInfos[i].Clsid;
+			free(imageCodecInfos);
+			return true;
+		}
+	}
+	
+	free(imageCodecInfos);
+	return false;
 }
 
 BYTE* PNGHandler::Read(const char* filename)
@@ -25,6 +58,7 @@ BYTE* PNGHandler::Read(const char* filename)
 
 	BitmapHandler* BMPHandler = new BitmapHandler();
 	BYTE* out = BMPHandler->Read(result);
+	mLastLoadedFilePixels = out;
 	mLastLoadedFileHeight = BMPHandler->GetLastLoadedFileHeight();
 	mLastLoadedFileWidth = BMPHandler->GetLastLoadedFileWidth();
 	mLastLoadedFileBitsPerPixel = BMPHandler->GetLastLoadedFileBitsPerPixel();
@@ -34,9 +68,24 @@ BYTE* PNGHandler::Read(const char* filename)
 
 void PNGHandler::Write(const char* filename, BYTE* pixels)
 {
-	Gdiplus::Bitmap bitmap(mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileWidth * 4, PixelFormat32bppARGB, pixels);
+	if (pixels == nullptr && mLastLoadedFilePixels == nullptr)
+	{
+		std::cerr << "Vous n'avez pas renseigné le tableau de pixels à sauvegarder dans l'image" << std::endl;
+		return;
+	}
+
+	if (pixels == nullptr) pixels = mLastLoadedFilePixels;
+
+	OrderRGBComponents(pixels, "BGR");
+	BYTE* reversedImage = BitmapHandler::InvertImage(pixels, mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileBitsPerPixel / 8);
+	Gdiplus::Bitmap bitmap(mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileWidth * 4, PixelFormat32bppARGB, reversedImage);
 
 	CLSID clsidPng;
-	CLSIDFromString(L"{557CF400-1A04-11D3-9A29-0000F81EF32E}", &clsidPng);
+	if (!GetEncoderClsid("image/png", &clsidPng))
+	{
+		std::cerr << "Impossible de récupérer le CLSID correspondant au format de fichier" << std::endl;
+		return;
+	}
 	bitmap.Save(FileHandler::ConvertToWide(filename), &clsidPng, NULL);
+
 }
