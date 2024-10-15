@@ -32,6 +32,10 @@ void UIManager::LoadImage()
 
         HWND hWnd = GetActiveWindow(); 
         InvalidateRect(hWnd, nullptr, TRUE); 
+        // Créer et afficher les boutons
+        CreateButtons(hWnd);
+        ShowButtons();
+
     }
 
 
@@ -70,13 +74,18 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
-        if (wmId == 1) 
-        {
-            this->LoadImage(); 
-        }
-        break;
+
         switch (wmId)
         {
+        case 1: 
+            this->LoadImage();
+            break;
+        case 2: 
+            MessageBox(hWnd, L"Décrypter cliqué", L"Info", MB_OK);
+            break;
+        case 3: 
+            MessageBox(hWnd, L"Crypter cliqué", L"Info", MB_OK);
+            break;
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;
@@ -148,6 +157,49 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
     }
     return 0;
     }
+
+
+void UIManager::CreateButtons(HWND hWnd) {
+    // Créer le bouton "Décrypter"
+    hDecryptButton = CreateWindow(
+        L"BUTTON",  // Class name
+        L"Décrypter",  // Button text
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
+        20,  // Position X
+        100,  // Position Y
+        100,  // Width
+        30,  // Height
+        hWnd,  // Parent window
+        (HMENU)2,  // Button ID
+        nullptr,  // Instance handle
+        nullptr); // No additional parameters
+
+    // Créer le bouton "Crypter"
+    hEncryptButton = CreateWindow(
+        L"BUTTON",  // Class name
+        L"Crypter",  // Button text
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
+        170,  // Position X
+        100,  // Position Y
+        100,  // Width
+        30,  // Height
+        hWnd,  // Parent window
+        (HMENU)3,  // Button ID
+        nullptr,  // Instance handle
+        nullptr); // No additional parameters
+}
+
+void UIManager::ShowButtons() {
+    ShowWindow(hDecryptButton, SW_SHOW);
+    ShowWindow(hEncryptButton, SW_SHOW);
+}
+
+void UIManager::HideButtons() {
+    ShowWindow(hDecryptButton, SW_HIDE);
+    ShowWindow(hEncryptButton, SW_HIDE);
+}
+
+
 
 
     

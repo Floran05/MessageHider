@@ -122,9 +122,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         L"BUTTON",  // Type de contrôle
         L"Charger une image", // Texte du bouton
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Styles du bouton
-        10,         // Position x
-        10,         // Position y
-        100,        // Largeur
+        20,         // Position x
+        20,         // Position y
+        250,        // Largeur
         30,         // Hauteur
         hWnd,       // Handle de la fenêtre parente
         (HMENU)1,   // Identifiant du bouton

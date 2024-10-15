@@ -11,13 +11,17 @@ class UIManager
 
 public:
 
-
+	HWND hDecryptButton;
+	HWND hEncryptButton;
 	Image* pImage;
 
 	UIManager() = default;
 
 	void Init();
 	void LoadImage();
+	void CreateButtons(HWND hWnd); 
+	void ShowButtons(); 
+	void HideButtons();
 
 
 	LRESULT CALLBACK ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HINSTANCE hInst);
