@@ -29,10 +29,12 @@ protected:
 	SteganoAlgorithm mSelectedAlgorithm;
 
 	AlgoStegano* mSteganoAlgorithm;
+	std::wstring path;
 
 public:
 
 	void LoadImageFromFilename(const std::string& filename);
+	void SetPath(const std::wstring& filename);
 	std::string Decrypt();
 	void Encrypt(const std::string& message);
 	int GetMessageMaxLenght();

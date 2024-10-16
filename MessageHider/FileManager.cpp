@@ -44,6 +44,11 @@ void FileManager::LoadImageFromFilename(const std::string& filename)
 	mFileHandler->Read(filename.c_str());
 }
 
+void FileManager::SetPath(const std::wstring& filename)
+{
+	FileManager::path = filename;
+}
+
 std::string FileManager::Decrypt()
 {
 	std::string message;
@@ -74,7 +79,7 @@ void FileManager::Encrypt(const std::string& message)
 		mFileHandler->GetLastLoadedFileWidth() * mFileHandler->GetLastLoadedFileHeight(),
 		mFileHandler->GetLastLoadedFileBitsPerPixel() / 8,
 		message);
-	mFileHandler->Write("C:\\Users\\fcarvalho\\Downloads\\out.png");
+	mFileHandler->Write(FileHandler::ConvertWStringToString(path).c_str());
 }
 
 int FileManager::GetMessageMaxLenght()

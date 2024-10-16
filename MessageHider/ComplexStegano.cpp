@@ -11,7 +11,7 @@ ComplexStegano::ComplexStegano()
 
 int ComplexStegano::MessageMaxLenght(const size_t len_pixel_tab, int nb_bytes_per_pixel)
 {
-	return len_pixel_tab * nb_bytes_per_pixel;
+	return len_pixel_tab / 8;
 }
 
 void ComplexStegano::Encrypt(unsigned char* pixel_tab, const size_t len_pixel_tab, int nb_bytes_per_pixel, std::string word_to_hide)
@@ -62,6 +62,9 @@ std::string ComplexStegano::Decrypt(unsigned char* pixel_tab, const size_t len_p
 			&& bytes_tab[bytes_tab.size() - 1] == 1)
 		{
 			return Conversion::BytesTabToWord(bytes_tab);
+		}
+		else {
+			return "[Pas de fin de message trouvée]";
 		}
 	}
 	return Conversion::BytesTabToWord(bytes_tab);

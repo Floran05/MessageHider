@@ -56,14 +56,9 @@ void JournalManager::Init(HINSTANCE hInstance, HWND hParent)
 // Écrire un message dans le journal
 void JournalManager::LogWrite(const std::wstring& message)
 {
-    // Ajouter le message au journal
     logContent += message + L"\r\n";
-
-    // Mettre à jour le texte de la zone de texte
     if (hTextBox)
-    {
         SetWindowText(hTextBox, logContent.c_str());
-    }
 }
 
 // Procédure de fenêtre pour le journal

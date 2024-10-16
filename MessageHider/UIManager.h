@@ -22,6 +22,7 @@ public:
 	HWND hEncryptButton;
 	HWND hTextBox; 
 	Image* pImage;
+	std::string imagePath;
 	FileManager* pFileManager;
 
 	JournalManager* journalManager; // Gestionnaire du journal

@@ -8,146 +8,193 @@ void UIManager::Init()
 {
 	UIManager::pImage = nullptr;
 	journalManager = new JournalManager();
-    pFileManager = new FileManager();
-    pFileManager->SelectAlgorithm(SteganoAlgorithm::BasicSteganoR);
+	pFileManager = new FileManager();
+	pFileManager->SelectAlgorithm(SteganoAlgorithm::BasicSteganoR);
 }
 
 void UIManager::LoadImage()
 {
 
-    OPENFILENAME ofn;       
-    WCHAR szFile[260];     
+	OPENFILENAME ofn;
+	WCHAR szFile[260];
 
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = GetActiveWindow();
-    ofn.lpstrFile = szFile;
-    ofn.lpstrFile[0] = '\0';
-    ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"Images (*.bmp;*.jpg;*.jpeg;*.png)\0*.bmp;*.jpg;*.jpeg;*.png\0Tous les fichiers (*.*)\0*.*\0";
-    ofn.nFilterIndex = 1;
-    ofn.lpstrFileTitle = nullptr;
-    ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = nullptr;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-
-    if (GetOpenFileName(&ofn)) {
-        delete pImage; 
-        pImage = new Gdiplus::Image(ofn.lpstrFile);
-
-        std::string path = FileHandler::ConvertLPWSTRToString(ofn.lpstrFile);
-        pFileManager->LoadImageFromFilename(path);
-
-        HWND hWnd = GetActiveWindow(); 
-        InvalidateRect(hWnd, nullptr, TRUE); 
-        // Créer et afficher les boutons
-        CreateButtons(hWnd);
-        CreateTextBox(hWnd);
-        ShowControls();
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = GetActiveWindow();
+	ofn.lpstrFile = szFile;
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = L"Images (*.bmp;*.jpg;*.jpeg;*.png)\0*.bmp;*.jpg;*.jpeg;*.png\0Tous les fichiers (*.*)\0*.*\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = nullptr;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = nullptr;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
 
-    }
+	if (GetOpenFileName(&ofn)) {
+		delete pImage;
+		pImage = new Gdiplus::Image(ofn.lpstrFile);
+
+		std::string path = FileHandler::ConvertLPWSTRToString(ofn.lpstrFile);
+		imagePath = path;
+		pFileManager->LoadImageFromFilename(path);
+
+		HWND hWnd = GetActiveWindow();
+		InvalidateRect(hWnd, nullptr, TRUE);
+		// Créer et afficher les boutons
+		CreateButtons(hWnd);
+		CreateTextBox(hWnd);
+		ShowControls();
 
 
-
-    //redraw
-    HWND hWnd = GetActiveWindow(); 
-    InvalidateRect(hWnd, nullptr, TRUE); 
+	}
+	//redraw
+	HWND hWnd = GetActiveWindow();
+	InvalidateRect(hWnd, nullptr, TRUE);
 
 
 }
 
 void UIManager::ClickDecrypt(HWND hWnd)
 {
-    std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
-    std::string message = pFileManager->Decrypt();
-    SetWindowTextW(hTextBox, FileHandler::ConvertStringToWString(message).c_str());
-    MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
+	std::wstring content = this->GetTextBoxContent();
+	std::string message = pFileManager->Decrypt();
+	SetWindowTextW(hTextBox, FileHandler::ConvertStringToWString(message).c_str());
 }
 
-void UIManager::ClickCrypt(HWND hWnd)
-{
-    std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
-    pFileManager->Encrypt(FileHandler::ConvertWStringToString(content));
-    MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
+#include <commdlg.h> // Pour la boîte de dialogue de sauvegarde
+#include <string>
+#include <algorithm> // Pour std::find_last_of
+
+#include <commdlg.h> // Pour la boîte de dialogue de sauvegarde
+#include <string>
+#include <algorithm> // Pour std::find_last_of
+#include <codecvt>   // Pour la conversion entre std::string et std::wstring
+
+void UIManager::ClickCrypt(HWND hWnd) {
+	// Vérifier si imagePath est défini
+	if (imagePath.empty()) {
+		MessageBox(hWnd, L"Aucune image à crypter.", L"Erreur", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	// Convertir std::string en std::wstring
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	std::wstring wideImagePath = converter.from_bytes(imagePath);
+
+	// Extraire le nom de fichier et l'extension
+	std::wstring fileName = wideImagePath.substr(wideImagePath.find_last_of(L"\\") + 1); // Obtenir le nom du fichier
+	std::wstring baseName = fileName.substr(0, fileName.find_last_of(L"."));
+	std::wstring extension = fileName.substr(fileName.find_last_of(L"."));
+
+	// Initialiser le chemin de sauvegarde avec le nom du fichier d'origine
+	std::wstring defaultFileName = baseName + L"_secret" + extension; // Ajoute "_copy" au nom de fichier
+
+	// Structure pour la boîte de dialogue
+	OPENFILENAME ofn;
+	WCHAR szFile[260];      // Buffer pour le chemin du fichier
+
+	// Initialiser la structure OPENFILENAME
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFile = szFile;
+	ofn.lpstrFile[0] = '\0'; // Initialiser le champ
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = L"Images (*.bmp;*.jpg;*.jpeg;*.png)\0*.bmp;*.jpg;*.jpeg;*.png\0Tous les fichiers (*.*)\0*.*\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = nullptr;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = nullptr;
+	ofn.Flags = OFN_OVERWRITEPROMPT; // Afficher un avertissement si le fichier existe déjà
+
+	// Proposer un nom de fichier par défaut
+	wcscpy_s(szFile, defaultFileName.c_str()); // Définir le nom par défaut
+
+	// Ouvrir la boîte de dialogue de sauvegarde
+	if (GetSaveFileName(&ofn)) {
+		// Le chemin du fichier est maintenant dans ofn.lpstrFile
+		std::wstring filePath = ofn.lpstrFile;
+		pFileManager->SetPath(filePath);
+
+		std::wstring content = this->GetTextBoxContent();
+		pFileManager->Encrypt(FileHandler::ConvertWStringToString(content));
+	}
 }
+
+
+
 
 
 
 INT_PTR UIManager::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return (INT_PTR)TRUE;
 
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
 }
 
 
 LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HINSTANCE hInst)
 {
-    switch (message)
-    {
-    case WM_COMMAND:
-    {
-        int wmId = LOWORD(wParam);
+	switch (message)
+	{
+	case WM_COMMAND:
+	{
+		int wmId = LOWORD(wParam);
 
-        switch (wmId)
-        {
-        case 1: // Identifiant du bouton "Load Image"
-            this->LoadImage();
-            break;
-        case 2: // Identifiant du bouton "Décrypter"
-        {
-            ClickDecrypt(hWnd);
-        }
-        break;
-        case 3: // Identifiant du bouton "Crypter"
-        {
-            ClickCrypt(hWnd);
-        }
-        break;
-        case ID_FICHIER_CHARGERUNEIMAGE:
-        {
-            HWND hMyButton = GetDlgItem(hWnd, 32772);
-            if (hMyButton)
-            {
-                // Activer le bouton
-                EnableWindow(hMyButton, TRUE);
-            }
-            else
-            {
-                MessageBox(hWnd, L"Le bouton n'a pas été trouvé", L"Erreur", MB_OK | MB_ICONERROR);
-            }
-            this->LoadImage(); }
-            break;
-        case ID_FICHIER_CRYPTERUNEIMAGE: 
-            this->ClickCrypt(hWnd);
+		switch (wmId)
+		{
+		case 1: // Identifiant du bouton "Load Image"
+			this->LoadImage();
+			break;
+		case 2: // Identifiant du bouton "Décrypter"
+		{
+			ClickDecrypt(hWnd);
+		}
+		break;
+		case 3: // Identifiant du bouton "Crypter"
+		{
+			ClickCrypt(hWnd);
+		}
+		break;
+		case ID_FICHIER_CHARGERUNEIMAGE:
+		{
+			HWND hMyButton = GetDlgItem(hWnd, 32772);
 
-            break;
-        case ID_FICHIER_DECRYPTERUNEIMAGE:
-            this->ClickDecrypt(hWnd);
-            break;
-        case IDM_ABOUT:
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-            break;
-        case IDM_EXIT:
-            DestroyWindow(hWnd);
-            break;    
-        case ID_AIDE_LACHANSONOFFICIELLE:
-                ShellExecute(0, 0, L"https://www.youtube.com/watch?v=zBbSH-w6L_8", 0, 0, SW_SHOW);
-                break;
+			EnableWindow(hMyButton, TRUE);
+
+			this->LoadImage(); }
+		break;
+		case ID_FICHIER_CRYPTERUNEIMAGE:
+			this->ClickCrypt(hWnd);
+
+			break;
+		case ID_FICHIER_DECRYPTERUNEIMAGE:
+			this->ClickDecrypt(hWnd);
+			break;
+		case IDM_ABOUT:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			break;
+		case IDM_EXIT:
+			DestroyWindow(hWnd);
+			break;
+		case ID_AIDE_LACHANSONOFFICIELLE:
+			ShellExecute(0, 0, L"https://www.youtube.com/watch?v=zBbSH-w6L_8", 0, 0, SW_SHOW);
+			break;
 
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -162,12 +209,9 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			{
 			case 'L': // Ctrl + L
 				this->LoadImage();
-				break;			
+				break;
 			case 'J': // Ctrl + L
-					this->ShowJournal();
-					break;
-			case 'T': // Ctrl + L
-				this->journalManager->LogWrite(L"ouais");
+				this->ShowJournal();
 				break;
 			case 'D': // Ctrl + D
 				if (pImage != nullptr) {
@@ -198,106 +242,106 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		HDC hdc = BeginPaint(hWnd, &ps);
 
 
-        // Taille du rectangle
-        int rectWidth = 300;
-        int rectHeight = 200;
+		// Taille du rectangle
+		int rectWidth = 300;
+		int rectHeight = 200;
 
-        // Récupérer la taille de la fenêtre
-        RECT clientRect;
-        GetClientRect(hWnd, &clientRect);
+		// Récupérer la taille de la fenêtre
+		RECT clientRect;
+		GetClientRect(hWnd, &clientRect);
 
 
-        int windowWidth = clientRect.right - clientRect.left;
-        int windowHeight = clientRect.bottom - clientRect.top;
+		int windowWidth = clientRect.right - clientRect.left;
+		int windowHeight = clientRect.bottom - clientRect.top;
 
-        // Calculer les coordonnées pour centrer le rectangle
-        int x = (windowWidth - rectWidth) / 2 + 150;
-        int y = (windowHeight - rectHeight) / 2 - 150;
+		// Calculer les coordonnées pour centrer le rectangle
+		int x = (windowWidth - rectWidth) / 2 + 150;
+		int y = (windowHeight - rectHeight) / 2 - 150;
 
-        // Dessiner le rectangle centré
-        Rectangle(hdc, x, y, x + rectWidth, y + rectHeight);
+		// Dessiner le rectangle centré
+		Rectangle(hdc, x, y, x + rectWidth, y + rectHeight);
 
-        // Si l'image est chargée, dessinez-la
-        if (pImage != nullptr) {
-            // Calculer les nouvelles dimensions pour préserver le rapport d'aspect
-            float aspectRatio = static_cast<float>(pImage->GetWidth()) / static_cast<float>(pImage->GetHeight());
-            int newWidth;  // Déclarer newWidth ici
-            int newHeight; // Déclarer newHeight ici
+		// Si l'image est chargée, dessinez-la
+		if (pImage != nullptr) {
+			// Calculer les nouvelles dimensions pour préserver le rapport d'aspect
+			float aspectRatio = static_cast<float>(pImage->GetWidth()) / static_cast<float>(pImage->GetHeight());
+			int newWidth;  // Déclarer newWidth ici
+			int newHeight; // Déclarer newHeight ici
 
-            if (aspectRatio > static_cast<float>(rectWidth) / static_cast<float>(rectHeight)) {
-                newWidth = rectWidth-2;
-                newHeight = static_cast<int>(rectWidth / aspectRatio)-2;
-            }
-            else {
-                newHeight = rectHeight-2;
-                newWidth = static_cast<int>(rectHeight * aspectRatio)-2;
-            }
+			if (aspectRatio > static_cast<float>(rectWidth) / static_cast<float>(rectHeight)) {
+				newWidth = rectWidth - 2;
+				newHeight = static_cast<int>(rectWidth / aspectRatio) - 2;
+			}
+			else {
+				newHeight = rectHeight - 2;
+				newWidth = static_cast<int>(rectHeight * aspectRatio) - 2;
+			}
 
-            // Calculer la position pour centrer l'image
-            int imgX = x + (rectWidth - newWidth) / 2;
-            int imgY = y + (rectHeight - newHeight) / 2;
+			// Calculer la position pour centrer l'image
+			int imgX = x + (rectWidth - newWidth) / 2;
+			int imgY = y + (rectHeight - newHeight) / 2;
 
-            // Créer un contexte de dessin GDI+
-            Graphics graphics(hdc);
-            graphics.DrawImage(pImage, imgX, imgY, newWidth, newHeight); // Dessiner l'image
-        }
+			// Créer un contexte de dessin GDI+
+			Graphics graphics(hdc);
+			graphics.DrawImage(pImage, imgX, imgY, newWidth, newHeight); // Dessiner l'image
+		}
 
-        // Terminer le dessin
-        EndPaint(hWnd, &ps);
-    }
-    break;
+		// Terminer le dessin
+		EndPaint(hWnd, &ps);
+	}
+	break;
 
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-    return 0;
-    }
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+	return 0;
+}
 
 
 void UIManager::CreateButtons(HWND hWnd) {
-    // Créer le bouton "Décrypter"
-    hDecryptButton = CreateWindow(
-        L"BUTTON",  // Class name
-        L"Décrypter",  // Button text
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
-        20,  // Position X
-        100,  // Position Y
-        100,  // Width
-        30,  // Height
-        hWnd,  // Parent window
-        (HMENU)2,  // Button ID
-        nullptr,  // Instance handle
-        nullptr); // No additional parameters
-    // Créer le bouton "Crypter"
-    hEncryptButton = CreateWindow(
-        L"BUTTON",  // Class name
-        L"Crypter",  // Button text
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
-        170,  // Position X
-        100,  // Position Y
-        100,  // Width
-        30,  // Height
-        hWnd,  // Parent window
-        (HMENU)3,  // Button ID
-        nullptr,  // Instance handle
-        nullptr); // No additional parameters
+	// Créer le bouton "Décrypter"
+	hDecryptButton = CreateWindow(
+		L"BUTTON",  // Class name
+		L"Décrypter",  // Button text
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
+		20,  // Position X
+		100,  // Position Y
+		100,  // Width
+		30,  // Height
+		hWnd,  // Parent window
+		(HMENU)2,  // Button ID
+		nullptr,  // Instance handle
+		nullptr); // No additional parameters
+	// Créer le bouton "Crypter"
+	hEncryptButton = CreateWindow(
+		L"BUTTON",  // Class name
+		L"Crypter",  // Button text
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
+		170,  // Position X
+		100,  // Position Y
+		100,  // Width
+		30,  // Height
+		hWnd,  // Parent window
+		(HMENU)3,  // Button ID
+		nullptr,  // Instance handle
+		nullptr); // No additional parameters
 }
 
 void UIManager::ShowControls() {
-    ShowWindow(hDecryptButton, SW_SHOW);
-    ShowWindow(hEncryptButton, SW_SHOW);
-    ShowWindow(hTextBox, SW_SHOW); // Afficher la zone de texte
+	ShowWindow(hDecryptButton, SW_SHOW);
+	ShowWindow(hEncryptButton, SW_SHOW);
+	ShowWindow(hTextBox, SW_SHOW); // Afficher la zone de texte
 
 
 }
 
 void UIManager::HideControls() {
-    ShowWindow(hDecryptButton, SW_HIDE);
-    ShowWindow(hEncryptButton, SW_HIDE);
-    ShowWindow(hTextBox, SW_HIDE); // Cacher la zone de texte
+	ShowWindow(hDecryptButton, SW_HIDE);
+	ShowWindow(hEncryptButton, SW_HIDE);
+	ShowWindow(hTextBox, SW_HIDE); // Cacher la zone de texte
 }
 
 void UIManager::ShowJournal()
@@ -308,37 +352,37 @@ void UIManager::ShowJournal()
 	{
 		JournalManager::Instance->Init(GetModuleHandle(nullptr), GetActiveWindow());
 	}
-        ShowWindow(journalManager->hJournalWnd, SW_SHOW);
+	ShowWindow(journalManager->hJournalWnd, SW_SHOW);
 }
 
 void UIManager::PrintText(LPCWSTR message)
 {
-    SetWindowTextW(hTextBox, message);
+	SetWindowTextW(hTextBox, message);
 }
 
 
 std::wstring UIManager::GetTextBoxContent() {
-    WCHAR buffer[256]; // Buffer pour stocker le contenu
-    GetWindowText(hTextBox, buffer, sizeof(buffer) / sizeof(WCHAR)); // Récupérer le texte
-    return std::wstring(buffer); // Convertir en wstring et retourner
+	WCHAR buffer[256]; // Buffer pour stocker le contenu
+	GetWindowText(hTextBox, buffer, sizeof(buffer) / sizeof(WCHAR)); // Récupérer le texte
+	return std::wstring(buffer); // Convertir en wstring et retourner
 }
 
 
 void UIManager::CreateTextBox(HWND hWnd) {
-    // Créer la zone de texte
-    hTextBox = CreateWindowEx(
-        WS_EX_CLIENTEDGE,  // Style étendu
-        L"EDIT",           // Class name
-        L"",               // Initial text
-        WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL, // Styles
-        20,               // Position X
-        150,              // Position Y
-        300,              // Width
-        100,              // Height
-        hWnd,             // Parent window
-        (HMENU)4,        // ID de la zone de texte
-        nullptr,         // Instance handle
-        nullptr);        // No additional parameters
+	// Créer la zone de texte
+	hTextBox = CreateWindowEx(
+		WS_EX_CLIENTEDGE,  // Style étendu
+		L"EDIT",           // Class name
+		L"",               // Initial text
+		WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL, // Styles
+		20,               // Position X
+		150,              // Position Y
+		300,              // Width
+		100,              // Height
+		hWnd,             // Parent window
+		(HMENU)4,        // ID de la zone de texte
+		nullptr,         // Instance handle
+		nullptr);        // No additional parameters
 }
 
 
@@ -349,7 +393,7 @@ void UIManager::CreateTextBox(HWND hWnd) {
 
 
 
-    
+
 
 
 

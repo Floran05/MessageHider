@@ -33,5 +33,8 @@ std::string Conversion::BytesTabToWord(std::vector<int> bytes_tab)
 		}
 		result += static_cast<char>(byte);
 	}
+	if (!result.empty() && result.back() == '\x03') {
+		result.erase(result.size() - 1);
+	}
 	return result;
 }
