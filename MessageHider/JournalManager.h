@@ -8,6 +8,8 @@ public:
     JournalManager();
     void Init(HINSTANCE hInstance, HWND hParent);
     void LogWrite(const std::wstring& message);
+    void LogWarning(const std::wstring& message);
+    void LogError(const std::wstring& message);
     HWND hJournalWnd;
     HWND hTextBox;
 
