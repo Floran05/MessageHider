@@ -23,7 +23,8 @@ public:
 	HWND hTextBox; 
 	Image* pImage;
 	std::string imagePath;
-	FileManager* pFileManager;
+	FileManager* pFileManager; 
+	HWND hCharCountLabel;
 
 	JournalManager* journalManager; // Gestionnaire du journal
 
