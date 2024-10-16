@@ -45,6 +45,7 @@ void UIManager::LoadImage()
 		// Créer et afficher les boutons
 		CreateButtons(hWnd);
 		CreateTextBox(hWnd);
+
 		ShowControls();
 
 
@@ -171,12 +172,24 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			ClickCrypt(hWnd);
 		}
 		break;
+		case 4: {
+			if (HIWORD(wParam) == EN_CHANGE) {
+				int length = GetWindowTextLength(hTextBox);
+				std::wstring charCountText = L"Caractères: " + std::to_wstring(length) + L"/100";
+
+				// Met à jour le texte du label
+				SetWindowTextW(hCharCountLabel, charCountText.c_str());
+				WCHAR buffer[256]; // Buffer pour stocker le contenu
+				auto tt = GetWindowText(hCharCountLabel, buffer, sizeof(buffer) / sizeof(WCHAR)); // Récupérer le texte
+
+				// Force uniquement le rafraîchissement du label
+				InvalidateRect(hCharCountLabel, nullptr, FALSE);
+				UpdateWindow(hCharCountLabel);
+			}
+		}
+			  break;
 		case ID_FICHIER_CHARGERUNEIMAGE:
 		{
-			HWND hMyButton = GetDlgItem(hWnd, 32772);
-
-			EnableWindow(hMyButton, TRUE);
-
 			this->LoadImage(); }
 		break;
 		case ID_FICHIER_CRYPTERUNEIMAGE:
@@ -201,6 +214,17 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		}
 	}
 	break;
+	case WM_NOTIFY: // Intercepter les notifications
+	{
+		if (((LPNMHDR)lParam)->idFrom == (UINT_PTR)hTextBox && ((LPNMHDR)lParam)->code == EN_CHANGE)
+		{
+			// Met à jour le compteur de caractères
+			int length = GetWindowTextLength(hTextBox);
+			std::wstring charCountText = L"Caractères: " + std::to_wstring(length) + L"/100";
+			SetWindowText(hCharCountLabel, charCountText.c_str());
+		}
+		break;
+	}
 	case WM_KEYDOWN:
 	{
 		if (GetKeyState(VK_CONTROL) & 0x8000) // Vérifie si la touche Ctrl est enfoncée
@@ -236,6 +260,7 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		}
 	}
 	break;
+
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
@@ -371,19 +396,38 @@ std::wstring UIManager::GetTextBoxContent() {
 void UIManager::CreateTextBox(HWND hWnd) {
 	// Créer la zone de texte
 	hTextBox = CreateWindowEx(
-		WS_EX_CLIENTEDGE,  // Style étendu
-		L"EDIT",           // Class name
-		L"",               // Initial text
+		WS_EX_CLIENTEDGE,    // Style étendu
+		L"EDIT",             // Class name
+		L"",                 // Initial text
 		WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL, // Styles
-		20,               // Position X
-		150,              // Position Y
-		300,              // Width
-		100,              // Height
-		hWnd,             // Parent window
-		(HMENU)4,        // ID de la zone de texte
-		nullptr,         // Instance handle
-		nullptr);        // No additional parameters
+		50,                 // Position X
+		250,                // Position Y
+		300,                // Width
+		100,                // Height
+		hWnd,               // Parent window
+		(HMENU)4,          // ID de la zone de texte
+		nullptr,           // Instance handle
+		nullptr);          // No additional parameters
+
+	// Limiter le nombre de caractères à 100
+	SendMessage(hTextBox, EM_SETLIMITTEXT, 100, 0);
+
+	// Créer un contrôle STATIC pour afficher le nombre de caractères
+	HWND hCharCountLabel = CreateWindowEx(
+		0,                    // Style étendu
+		L"STATIC",           // Class name
+		L"Caractères: 0/100",// Initial text
+		WS_CHILD | WS_VISIBLE, // Styles
+		50,                  // Position X
+		360,                 // Position Y
+		200,                 // Width
+		20,                  // Height
+		hWnd,                // Parent window
+		nullptr,            // No ID for this label
+		nullptr,           // Instance handle
+		nullptr);          // No additional parameters
 }
+
 
 
 
