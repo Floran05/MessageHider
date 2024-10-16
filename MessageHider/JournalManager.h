@@ -15,5 +15,5 @@ public:
 
 private:
     static LRESULT CALLBACK JournalProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-    std::wstring logContent; // Contient le texte du journal
+    std::wstring logContent; 
 };

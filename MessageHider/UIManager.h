@@ -35,6 +35,7 @@ public:
 	void HideControls(); 
 
 	void ShowJournal();
+	void PrintText(LPCWSTR message);
 
 	std::wstring GetTextBoxContent();
 

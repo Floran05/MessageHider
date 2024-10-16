@@ -60,6 +60,7 @@ void UIManager::ClickDecrypt(HWND hWnd)
 {
     std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
     std::string message = pFileManager->Decrypt();
+    SetWindowTextW(hTextBox, content.c_str());
     MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
 }
 
@@ -69,6 +70,8 @@ void UIManager::ClickCrypt(HWND hWnd)
     pFileManager->Encrypt(FileHandler::ConvertWStringToString(content));
     MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
 }
+
+
 
 INT_PTR UIManager::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -297,14 +300,18 @@ void UIManager::HideControls() {
 
 void UIManager::ShowJournal()
 {
+
 	// Initialiser le journal s'il n'a pas déjà été créé
 	if (!journalManager->hJournalWnd)
 	{
 		JournalManager::Instance->Init(GetModuleHandle(nullptr), GetActiveWindow());
 	}
+        ShowWindow(journalManager->hJournalWnd, SW_SHOW);
+}
 
-	// Afficher la fenêtre du journal
-	ShowWindow(journalManager->hJournalWnd, SW_SHOW);
+void UIManager::PrintText(LPCWSTR message)
+{
+    SetWindowTextW(hTextBox, message);
 }
 
 
