@@ -11,6 +11,7 @@ class AlgoStegano;
 enum class SteganoAlgorithm
 {
 	BasicSteganoR,
+	ComplexStegano,
 	None
 };
 

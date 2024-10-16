@@ -6,6 +6,7 @@
 #include "BitmapHandler.h"
 #include "PNGHandler.h"
 #include "BasicSteganoR.h"
+#include "ComplexStegano.h"
 
 FileManager::FileManager()
 	: mFileHandler(nullptr)
@@ -73,13 +74,14 @@ void FileManager::Encrypt(const std::string& message)
 		mFileHandler->GetLastLoadedFileWidth() * mFileHandler->GetLastLoadedFileHeight(),
 		mFileHandler->GetLastLoadedFileBitsPerPixel() / 8,
 		message);
-	mFileHandler->Write("C:\\Users\\fcarvalho\\Downloads\\out.bmp");
+	mFileHandler->Write("C:\\Users\\fcarvalho\\Downloads\\out.png");
 }
 
 int FileManager::GetMessageMaxLenght()
 {
-	//return mSteganoAlgorithm-
-	return 0;
+	return mSteganoAlgorithm->MessageMaxLenght(
+		mFileHandler->GetLastLoadedFileWidth() * mFileHandler->GetLastLoadedFileHeight(), 
+		mFileHandler->GetLastLoadedFileBitsPerPixel() / 8);
 }
 
 void FileManager::SelectAlgorithm(const SteganoAlgorithm& algo)
@@ -89,6 +91,9 @@ void FileManager::SelectAlgorithm(const SteganoAlgorithm& algo)
 	{
 	case SteganoAlgorithm::BasicSteganoR:
 		mSteganoAlgorithm = new BasicSteganoR();
+		break;
+	case SteganoAlgorithm::ComplexStegano:
+		mSteganoAlgorithm = new ComplexStegano();
 		break;
 	}
 }

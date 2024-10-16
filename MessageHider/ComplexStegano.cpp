@@ -26,19 +26,19 @@ void ComplexStegano::Encrypt(unsigned char* pixel_tab, const size_t len_pixel_ta
 	{
 		pixel_tab[i] &= 0b11111110;
 		pixel_tab[i] |= *bytes_iterator;
+		bytes_iterator++;
 		if (bytes_iterator == bytes_tab.end())
 		{
 			return;
 		}
-		bytes_iterator++;
 
-		pixel_tab[len_pixel_tab - i - 1] &= 0b11111110;
-		pixel_tab[len_pixel_tab - i - 1] |= *bytes_iterator;
+		pixel_tab[len_pixel_tab - i - 4] &= 0b11111110;
+		pixel_tab[len_pixel_tab - i - 4] |= *bytes_iterator;
+		bytes_iterator++;
 		if (bytes_iterator == bytes_tab.end())
 		{
 			return;
 		}
-		bytes_iterator++;
 	}
 }
 
@@ -48,7 +48,7 @@ std::string ComplexStegano::Decrypt(unsigned char* pixel_tab, const size_t len_p
 	for (std::size_t i = 0; i < len_pixel_tab; i += nb_bytes_per_pixel) {
 		int previous_first_bit = pixel_tab[i] & 1;
 		bytes_tab.push_back(previous_first_bit);
-		int previous_last_bit = pixel_tab[len_pixel_tab - i - 1] & 1;
+		int previous_last_bit = pixel_tab[len_pixel_tab - i - 4] & 1;
 		bytes_tab.push_back(previous_last_bit);
 		if (bytes_tab.size() > 8
 			&& bytes_tab.size() % 8 == 0
