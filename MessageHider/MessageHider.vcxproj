@@ -135,6 +135,7 @@
     <ClInclude Include="BlurFilter.h" />
     <ClInclude Include="ComplexStegano.h" />
     <ClInclude Include="Conversion.h" />
+    <ClInclude Include="EdgeDetectionFilter.h" />
     <ClInclude Include="FileHandler.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="Filter.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="RandomNumberGenerator.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SepiaFilter.h" />
+    <ClInclude Include="SharpeningFilter.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UIManager.h" />
   </ItemGroup>
@@ -157,6 +159,7 @@
     <ClCompile Include="BlurFilter.cpp" />
     <ClCompile Include="ComplexStegano.cpp" />
     <ClCompile Include="Conversion.cpp" />
+    <ClCompile Include="EdgeDetectionFilter.cpp" />
     <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="Filter.cpp" />
@@ -167,6 +170,7 @@
     <ClCompile Include="PNGHandler.cpp" />
     <ClCompile Include="RandomNumberGenerator.cpp" />
     <ClCompile Include="SepiaFilter.cpp" />
+    <ClCompile Include="SharpeningFilter.cpp" />
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>

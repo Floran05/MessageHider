@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#define M_PI 3.1415926
+
 class BlurFilter : public Filter
 {
 public:
@@ -12,7 +14,8 @@ public:
 
 public:
 
-	std::vector<float> createKernel(float sigma);
+	std::vector<std::vector<float>> CreateKernel(const int size, const float sigma);
+	unsigned char ClampByte(int value);
 
 	void Apply(unsigned char* pixels, int width, int height, int bytesPerPixel);
 

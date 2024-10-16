@@ -9,6 +9,8 @@
 #include "ComplexStegano.h"
 #include "JournalManager.h"
 
+#include "BlurFilter.h"
+
 FileManager::FileManager()
 	: mFileHandler(nullptr)
 	, mImage(nullptr)
@@ -74,6 +76,10 @@ void FileManager::Encrypt(const std::string& message)
 		JournalManager::Instance->LogError(L"Can't encrypt the message : no algorithm selected");
 		return;
 	}
+
+	BlurFilter* f = new BlurFilter();
+	mFileHandler->AddFilter(f);
+	mFileHandler->ApplyFilters();
 
 	mSteganoAlgorithm->Encrypt(
 		mFileHandler->GetPixels(),
