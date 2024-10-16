@@ -2,8 +2,6 @@
 
 #include <vector>
 #include <iostream>
-#include <gdiplus.h>
-#pragma comment (lib, "Gdiplus.lib")
 
 #include "BitmapHandler.h"
 
@@ -78,7 +76,12 @@ void PNGHandler::Write(const char* filename, BYTE* pixels)
 
 	OrderRGBComponents(pixels, "BGR");
 	BYTE* reversedImage = BitmapHandler::InvertImage(pixels, mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileBitsPerPixel / 8);
-	Gdiplus::Bitmap bitmap(mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileWidth * 4, PixelFormat32bppARGB, reversedImage);
+	Gdiplus::Bitmap bitmap(
+		mLastLoadedFileWidth, 
+		mLastLoadedFileHeight, 
+		mLastLoadedFileWidth * mLastLoadedFileBitsPerPixel / 8, 
+		mLastLoadedFileBitsPerPixel / 8 > 3 ? PixelFormat32bppARGB : PixelFormat24bppRGB,
+		reversedImage);
 
 	CLSID clsidPng;
 	if (!GetEncoderClsid("image/png", &clsidPng))

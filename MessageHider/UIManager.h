@@ -9,6 +9,9 @@
 #include <gdiplus.h>
 #pragma comment (lib, "Gdiplus.lib")
 using namespace Gdiplus;
+
+class FileManager;
+
 class UIManager
 {
 
@@ -18,6 +21,7 @@ public:
 	HWND hEncryptButton;
 	HWND hTextBox; 
 	Image* pImage;
+	FileManager* pFileManager;
 
 	UIManager() = default;
 

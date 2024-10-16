@@ -3,6 +3,9 @@
 #include <Windows.h>
 #include <string>
 #include <vector>
+#include <string>
+#include <gdiplus.h>
+#pragma comment (lib, "Gdiplus.lib")
 
 class Filter;
 
@@ -29,11 +32,15 @@ public:
 	int GetLastLoadedFileHeight() const { return mLastLoadedFileHeight; }
 	int GetLastLoadedFileWidth() const { return mLastLoadedFileWidth; }
 	int GetLastLoadedFileBitsPerPixel() const { return mLastLoadedFileBitsPerPixel; }
+	BYTE* GetPixels() const { return mLastLoadedFilePixels; }
 
 	virtual BYTE* Read(const char* filename) = 0;
 	virtual void Write(const char* filename, BYTE* pixels = nullptr) = 0;
+	virtual Gdiplus::Bitmap* GetGDIPlusBitmap();
 
 	static WCHAR* ConvertToWide(const char* charStr);
+	static char* ConvertToChar(const WCHAR* wcharStr);
+	static std::string ConvertWStringToString(std::wstring& wstr);
 
 	void AddFilter(Filter* newFilter);
 	void ApplyFilters();

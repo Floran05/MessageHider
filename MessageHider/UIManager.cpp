@@ -1,9 +1,13 @@
 #include "UIManager.h"
 #include <string>
 
+#include "FileManager.h"
+#include "FileHandler.h"
+
 void UIManager::Init()
 {
     UIManager::pImage = nullptr;
+    pFileManager = new FileManager();
 }
 
 void UIManager::LoadImage()
@@ -28,7 +32,9 @@ void UIManager::LoadImage()
 
     if (GetOpenFileName(&ofn)) {
         delete pImage; 
-        pImage = new Gdiplus::Image(ofn.lpstrFile); 
+        pImage = new Gdiplus::Image(ofn.lpstrFile);
+
+        pFileManager->LoadImageFromFilename(FileHandler::ConvertToChar(ofn.lpstrFile));
 
         HWND hWnd = GetActiveWindow(); 
         InvalidateRect(hWnd, nullptr, TRUE); 
@@ -52,12 +58,14 @@ void UIManager::LoadImage()
 void UIManager::ClickDecrypt(HWND hWnd)
 {
     std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
+    std::string message = pFileManager->Decrypt();
     MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
 }
 
 void UIManager::ClickCrypt(HWND hWnd)
 {
     std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
+    pFileManager->Encrypt(FileHandler::ConvertWStringToString(content));
     MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
 }
 
