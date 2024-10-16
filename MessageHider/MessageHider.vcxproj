@@ -136,9 +136,11 @@
     <ClInclude Include="ComplexStegano.h" />
     <ClInclude Include="Conversion.h" />
     <ClInclude Include="FileHandler.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="Filter.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GrayscaleFilter.h" />
+    <ClInclude Include="JournalManager.h" />
     <ClInclude Include="MessageHider.h" />
     <ClInclude Include="NegativeFilter.h" />
     <ClInclude Include="PNGHandler.h" />
@@ -146,6 +148,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SepiaFilter.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlgoStegano.cpp" />
@@ -155,13 +158,16 @@
     <ClCompile Include="ComplexStegano.cpp" />
     <ClCompile Include="Conversion.cpp" />
     <ClCompile Include="FileHandler.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="Filter.cpp" />
     <ClCompile Include="GrayscaleFilter.cpp" />
+    <ClCompile Include="JournalManager.cpp" />
     <ClCompile Include="MessageHider.cpp" />
     <ClCompile Include="NegativeFilter.cpp" />
     <ClCompile Include="PNGHandler.cpp" />
     <ClCompile Include="RandomNumberGenerator.cpp" />
     <ClCompile Include="SepiaFilter.cpp" />
+    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MessageHider.rc" />
