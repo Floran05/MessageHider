@@ -1,10 +1,10 @@
 #pragma once
 #include "AlgoStegano.h"
 
-class BasicSteganoR : public AlgoStegano
+class ComplexStegano : public AlgoStegano
 {
 public:
-	BasicSteganoR();
+	ComplexStegano();
 
 	unsigned char* pixel_tab;
 	std::string word_to_hide;
