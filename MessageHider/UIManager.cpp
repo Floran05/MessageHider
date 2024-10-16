@@ -8,6 +8,7 @@ void UIManager::Init()
 {
     UIManager::pImage = nullptr;
     pFileManager = new FileManager();
+    pFileManager->SelectAlgorithm(SteganoAlgorithm::BasicSteganoR);
 }
 
 void UIManager::LoadImage()
@@ -34,7 +35,8 @@ void UIManager::LoadImage()
         delete pImage; 
         pImage = new Gdiplus::Image(ofn.lpstrFile);
 
-        pFileManager->LoadImageFromFilename(FileHandler::ConvertToChar(ofn.lpstrFile));
+        std::string path = FileHandler::ConvertLPWSTRToString(ofn.lpstrFile);
+        pFileManager->LoadImageFromFilename(path);
 
         HWND hWnd = GetActiveWindow(); 
         InvalidateRect(hWnd, nullptr, TRUE); 

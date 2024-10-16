@@ -1,6 +1,5 @@
 #include "FileManager.h"
 
-#include <string>
 #include <algorithm>
 #include <iostream>
 
@@ -21,7 +20,7 @@ FileManager::~FileManager()
 {
 }
 
-void FileManager::LoadImageFromFilename(const char* filename)
+void FileManager::LoadImageFromFilename(const std::string& filename)
 {
 	std::string fn(filename);
 	std::string ext = fn.substr(fn.find_last_of(".") + 1);
@@ -41,10 +40,10 @@ void FileManager::LoadImageFromFilename(const char* filename)
 		return;
 	}
 
-	mFileHandler->Read(filename);
+	mFileHandler->Read(filename.c_str());
 }
 
-std::string& FileManager::Decrypt()
+std::string FileManager::Decrypt()
 {
 	std::string message;
 	if (mSelectedAlgorithm == SteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
@@ -74,6 +73,7 @@ void FileManager::Encrypt(const std::string& message)
 		mFileHandler->GetLastLoadedFileWidth() * mFileHandler->GetLastLoadedFileHeight(),
 		mFileHandler->GetLastLoadedFileBitsPerPixel() / 8,
 		message);
+	mFileHandler->Write("C:\\Users\\fcarvalho\\Downloads\\out.bmp");
 }
 
 int FileManager::GetMessageMaxLenght()

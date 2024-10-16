@@ -39,7 +39,7 @@ public:
 	virtual Gdiplus::Bitmap* GetGDIPlusBitmap();
 
 	static WCHAR* ConvertToWide(const char* charStr);
-	static char* ConvertToChar(const WCHAR* wcharStr);
+	static std::string ConvertLPWSTRToString(LPWSTR& lpwStr);
 	static std::string ConvertWStringToString(std::wstring& wstr);
 
 	void AddFilter(Filter* newFilter);

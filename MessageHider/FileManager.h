@@ -31,8 +31,8 @@ protected:
 
 public:
 
-	void LoadImageFromFilename(const char* filename);
-	std::string& Decrypt();
+	void LoadImageFromFilename(const std::string& filename);
+	std::string Decrypt();
 	void Encrypt(const std::string& message);
 	int GetMessageMaxLenght();
 

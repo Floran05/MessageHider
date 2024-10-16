@@ -1,9 +1,9 @@
 #include "FileHandler.h"
 
 #include <iostream>
-#include <comdef.h>
 #include <locale>
 #include <codecvt>
+#include <string>
 
 #include "Filter.h"
 
@@ -84,10 +84,11 @@ WCHAR* FileHandler::ConvertToWide(const char* charStr)
 	return wideStr;
 }
 
-char* FileHandler::ConvertToChar(const WCHAR* wcharStr)
+std::string FileHandler::ConvertLPWSTRToString(LPWSTR& lpwStr)
 {
-	_bstr_t out(wcharStr);
-	return out;
+	std::wstring wstr(lpwStr);
+	std::string outStr(wstr.begin(), wstr.end());
+	return outStr;
 }
 
 std::string FileHandler::ConvertWStringToString(std::wstring& wstr)
