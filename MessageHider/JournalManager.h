@@ -11,7 +11,7 @@ public:
     HWND hJournalWnd;
     HWND hTextBox;
 
-    //static JournalManager* Instance;
+    static JournalManager* Instance ;
 
 private:
     static LRESULT CALLBACK JournalProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

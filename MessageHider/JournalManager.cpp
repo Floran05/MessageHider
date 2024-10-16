@@ -2,8 +2,11 @@
 #include <windows.h>
 
 // Constructeur
-JournalManager::JournalManager() : hJournalWnd(nullptr), hTextBox(nullptr) {}
 
+JournalManager* JournalManager::Instance = nullptr;
+JournalManager::JournalManager() : hJournalWnd(nullptr), hTextBox(nullptr) {
+    Instance = this;
+}
 // Initialiser le JournalManager
 void JournalManager::Init(HINSTANCE hInstance, HWND hParent)
 {

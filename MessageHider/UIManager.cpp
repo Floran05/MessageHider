@@ -7,9 +7,7 @@
 void UIManager::Init()
 {
 	UIManager::pImage = nullptr;
-
 	journalManager = new JournalManager();
-    UIManager::pImage = nullptr;
     pFileManager = new FileManager();
 }
 
@@ -302,7 +300,7 @@ void UIManager::ShowJournal()
 	// Initialiser le journal s'il n'a pas déjà été créé
 	if (!journalManager->hJournalWnd)
 	{
-		journalManager->Init(GetModuleHandle(nullptr), GetActiveWindow());
+		JournalManager::Instance->Init(GetModuleHandle(nullptr), GetActiveWindow());
 	}
 
 	// Afficher la fenêtre du journal
