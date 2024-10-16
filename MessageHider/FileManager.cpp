@@ -7,6 +7,7 @@
 #include "PNGHandler.h"
 #include "BasicSteganoR.h"
 #include "ComplexStegano.h"
+#include "JournalManager.h"
 
 FileManager::FileManager()
 	: mFileHandler(nullptr)
@@ -37,7 +38,7 @@ void FileManager::LoadImageFromFilename(const std::string& filename)
 	}
 	else
 	{
-		std::cerr << "Impossible de charger l'image : ce format n'est pas pris en charge (" << ext << ")" << std::endl;
+		JournalManager::Instance->LogWrite(L"Can't load image : this format is not supported (" + FileHandler::ConvertStringToWString(ext) + L")");
 		return;
 	}
 
@@ -54,7 +55,7 @@ std::string FileManager::Decrypt()
 	std::string message;
 	if (mSelectedAlgorithm == SteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
 	{
-		std::cerr << "Impossible de déchiffrer le message de l'image : aucun algorithme n'a été sélectionné" << std::endl;
+		JournalManager::Instance->LogError(L"Can't decrypt message : no algorithm selected");
 		return message;
 	}
 
@@ -70,7 +71,7 @@ void FileManager::Encrypt(const std::string& message)
 {
 	if (mSelectedAlgorithm == SteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
 	{
-		std::cerr << "Impossible de chiffrer le message dans l'image : aucun algorithme n'a été sélectionné" << std::endl;
+		JournalManager::Instance->LogError(L"Can't encrypt the message : no algorithm selected");
 		return;
 	}
 

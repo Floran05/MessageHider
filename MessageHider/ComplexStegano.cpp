@@ -20,7 +20,6 @@ void ComplexStegano::Encrypt(unsigned char* pixel_tab, const size_t len_pixel_ta
 	JournalManager::Instance->LogWrite(L"Start of encryption with the complex algorithm...");
 	std::vector<int> bytes_tab = Conversion::WordToBytesTab(word_to_hide);
 	if (MessageMaxLenght(len_pixel_tab, nb_bytes_per_pixel) < bytes_tab.size()) {
-		std::cerr << "The message is too long, thus can't be encrytped." << std::endl;
 		JournalManager::Instance->LogWarning(L"The message is too long, thus can't be encrytped.");
 		return;
 	}

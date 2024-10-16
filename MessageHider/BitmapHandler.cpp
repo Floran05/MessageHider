@@ -4,7 +4,10 @@
 #include <fstream>
 #include <iostream>
 
+#include "JournalManager.h"
+
 BitmapHandler::BitmapHandler()
+	: lastLoadedFileHeader({0})
 {
 }
 
@@ -14,10 +17,11 @@ BitmapHandler::~BitmapHandler()
 
 BYTE* BitmapHandler::Read(const char* filename)
 {
+	JournalManager::Instance->LogWrite(L"Reading BMP file...");
 	HBITMAP handleBitmap = (HBITMAP)LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
 	if (handleBitmap == NULL)
 	{
-		std::cerr << "Impossible de charger l'image" << std::endl;
+		JournalManager::Instance->LogError(L"Can't load image");
 		return new BYTE[0];
 	}
 
@@ -29,13 +33,13 @@ BYTE* BitmapHandler::Read(HBITMAP& handleBitmap)
 	BITMAP bitmap;
 	if (!GetObject(handleBitmap, sizeof(BITMAP), &bitmap))
 	{
-		std::cerr << "Impossible de récupérer les données de l'image" << std::endl;
+		JournalManager::Instance->LogError(L"Can't get image data");
 		return new BYTE[0];
 	}
 
-	std::cout << "Image Height: " << bitmap.bmHeight << std::endl;
-	std::cout << "Image Width: " << bitmap.bmWidth << std::endl;
-	std::cout << "Bits per pixel: " << bitmap.bmBitsPixel << std::endl;
+	JournalManager::Instance->LogWrite(L"Image heigh: " + std::to_wstring(bitmap.bmHeight));
+	JournalManager::Instance->LogWrite(L"Image width: " + std::to_wstring(bitmap.bmWidth));
+	JournalManager::Instance->LogWrite(L"Bits per pixel: " + std::to_wstring(bitmap.bmBitsPixel));
 
 	HDC hdc = CreateCompatibleDC(NULL);
 	SelectObject(hdc, handleBitmap);
@@ -60,7 +64,7 @@ BYTE* BitmapHandler::Read(HBITMAP& handleBitmap)
 	bitmapInfo.bmiHeader = lastLoadedFileHeader;
 	if (!GetDIBits(hdc, handleBitmap, 0, bitmap.bmHeight, pixels, &bitmapInfo, DIB_RGB_COLORS))
 	{
-		std::cerr << "Impossible de récupérer les données de l'image" << std::endl;
+		JournalManager::Instance->LogError(L"Can't get image data");
 		DeleteDC(hdc);
 		DeleteObject(handleBitmap);
 		return new BYTE[0];
@@ -73,9 +77,10 @@ BYTE* BitmapHandler::Read(HBITMAP& handleBitmap)
 
 void BitmapHandler::Write(const char* filename, BYTE* pixels)
 {
+	JournalManager::Instance->LogWrite(L"Writing BMP file...");
 	if (pixels == nullptr && mLastLoadedFilePixels == nullptr)
 	{
-		std::cerr << "Vous n'avez pas renseigné le tableau de pixels à sauvegarder dans l'image" << std::endl;
+		JournalManager::Instance->LogError(L"Can't save image : pixels array not set");
 		return;
 	}
 
@@ -85,7 +90,7 @@ void BitmapHandler::Write(const char* filename, BYTE* pixels)
 
 	if (file == INVALID_HANDLE_VALUE)
 	{
-		std::cerr << "La création du fichier a échoué" << std::endl;
+		JournalManager::Instance->LogError(L"File creation failed");
 		return;
 	}
 
@@ -99,14 +104,14 @@ void BitmapHandler::Write(const char* filename, BYTE* pixels)
 	DWORD dwordTemp;
 	if (!WriteFile(file, (LPVOID)&header, sizeof(BITMAPFILEHEADER), &dwordTemp, NULL))
 	{
-		std::cerr << "Impossible d'écrire le header de fichier BITMAPFILEHEADER" << std::endl;
+		JournalManager::Instance->LogWrite(L"Can't write BITMAPFILEHEADER header");
 		CloseHandle(file);
 		return;
 	}
 
 	if (!WriteFile(file, (LPVOID)&lastLoadedFileHeader, sizeof(BITMAPINFOHEADER) + lastLoadedFileHeader.biClrUsed * sizeof(RGBQUAD), &dwordTemp, NULL))
 	{
-		std::cerr << "Impossible d'écrire le header de fichier BITMAPINFOHEADER ainsi que le tableau RGBQUAD" << std::endl;
+		JournalManager::Instance->LogWrite(L"Can't write BITMAPINFOHEADER header and RGBQUAD array");
 		CloseHandle(file);
 		return;
 	}
@@ -115,14 +120,14 @@ void BitmapHandler::Write(const char* filename, BYTE* pixels)
 	DWORD totalBytes = lastLoadedFileHeader.biSizeImage;
 	if (!WriteFile(file, pixels, (int)totalBytes, &dwordTemp, NULL))
 	{
-		std::cerr << "Impossible d'écrire les pixels dans le fichier" << std::endl;
+		JournalManager::Instance->LogWrite(L"Can't write pixels in file");
 		CloseHandle(file);
 		return;
 	}
 
 	if (!CloseHandle(file))
 	{
-		std::cerr << "Une erreur est survenue lors de la fermeture du fichier" << std::endl;
+		JournalManager::Instance->LogWrite(L"An error occured while trying to close the file");
 		return;
 	}
 }

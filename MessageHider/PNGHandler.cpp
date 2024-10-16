@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "BitmapHandler.h"
+#include "JournalManager.h"
 
 PNGHandler::PNGHandler()
 {
@@ -46,6 +47,7 @@ bool PNGHandler::GetEncoderClsid(const char* format, CLSID* cslid)
 
 BYTE* PNGHandler::Read(const char* filename)
 {
+	JournalManager::Instance->LogWrite(L"Reading PNG file...");
 	HBITMAP result = NULL;
 	Gdiplus::Bitmap* bitmap = Gdiplus::Bitmap::FromFile(FileHandler::ConvertToWide(filename), false);
 	if (bitmap)
@@ -66,9 +68,10 @@ BYTE* PNGHandler::Read(const char* filename)
 
 void PNGHandler::Write(const char* filename, BYTE* pixels)
 {
+	JournalManager::Instance->LogWrite(L"Writing PNG file...");
 	if (pixels == nullptr && mLastLoadedFilePixels == nullptr)
 	{
-		std::cerr << "Vous n'avez pas renseigné le tableau de pixels à sauvegarder dans l'image" << std::endl;
+		JournalManager::Instance->LogError(L"Pixel array not set");
 		return;
 	}
 
@@ -86,7 +89,7 @@ void PNGHandler::Write(const char* filename, BYTE* pixels)
 	CLSID clsidPng;
 	if (!GetEncoderClsid("image/png", &clsidPng))
 	{
-		std::cerr << "Impossible de récupérer le CLSID correspondant au format de fichier" << std::endl;
+		JournalManager::Instance->LogError(L"Can't get CLSID corresponding to this format");
 		return;
 	}
 	bitmap.Save(FileHandler::ConvertToWide(filename), &clsidPng, NULL);

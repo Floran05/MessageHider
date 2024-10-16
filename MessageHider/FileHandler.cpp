@@ -6,6 +6,7 @@
 #include <string>
 
 #include "Filter.h"
+#include "JournalManager.h"
 
 FileHandler::FileHandler()
 	: mLastLoadedFilePixels(nullptr)
@@ -21,9 +22,10 @@ FileHandler::~FileHandler()
 
 void FileHandler::OrderRGBComponents(BYTE* pixels, const std::string& fromOrder)
 {
+	JournalManager::Instance->LogWrite(L"Reorder components to RGB");
 	if (pixels == nullptr && mLastLoadedFilePixels == nullptr)
 	{
-		std::cerr << "Vous n'avez pas renseigné le tableau de pixels à modifier" << std::endl;
+		JournalManager::Instance->LogError(L"Pixels array is not set");
 		return;
 	}
 	
@@ -64,7 +66,8 @@ Gdiplus::Bitmap* FileHandler::GetGDIPlusBitmap()
 {
 	if (mLastLoadedFileWidth < 1 || mLastLoadedFileHeight < 1)
 	{
-		std::cerr << "Impossible de récupérer un Bitmap GDI+ : Aucune image n'a été chargée";
+		JournalManager::Instance->LogError(L"Can't generate a GDI+ Bitmap : no image has been loaded");
+		return nullptr;
 	}
 
 	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(
@@ -110,6 +113,7 @@ void FileHandler::AddFilter(Filter* newFilter)
 
 void FileHandler::ApplyFilters()
 {
+	JournalManager::Instance->LogWrite(L"Applying filters...");
 	for (Filter* filter : filters)
 	{
 		filter->Apply(mLastLoadedFilePixels, mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileBitsPerPixel / 8);
