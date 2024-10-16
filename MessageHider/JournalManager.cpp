@@ -1,4 +1,5 @@
 #include "JournalManager.h"
+#include "JournalManager.h"
 #include <windows.h>
 
 // Constructeur
@@ -56,7 +57,34 @@ void JournalManager::Init(HINSTANCE hInstance, HWND hParent)
 // Écrire un message dans le journal
 void JournalManager::LogWrite(const std::wstring& message)
 {
-    logContent += message + L"\r\n";
+    // Ajouter le message au journal
+    logContent += message + L"\r\n[DEBUG] ";
+
+    // Mettre à jour le texte de la zone de texte
+    if (hTextBox)
+    {
+        SetWindowText(hTextBox, logContent.c_str());
+    }
+}
+
+void JournalManager::LogWarning(const std::wstring& message)
+{
+    // Ajouter le message au journal
+    logContent += message + L"\r\n[WARNING] ";
+
+    // Mettre à jour le texte de la zone de texte
+    if (hTextBox)
+    {
+        SetWindowText(hTextBox, logContent.c_str());
+    }
+}
+
+void JournalManager::LogError(const std::wstring& message)
+{
+    // Ajouter le message au journal
+    logContent += message + L"\r\n[!ERROR!] ";
+
+    // Mettre à jour le texte de la zone de texte
     if (hTextBox)
         SetWindowText(hTextBox, logContent.c_str());
 }

@@ -1,4 +1,5 @@
 #include "Conversion.h"
+#include "JournalManager.h"
 #include <iostream>
 #include <bitset>
 
@@ -8,6 +9,7 @@ Conversion::Conversion()
 
 std::vector<int> Conversion::WordToBytesTab(std::string word_to_hide)
 {
+	JournalManager::Instance->LogWrite(L"Start converting the word to hide into a tab of bytes...");
 	word_to_hide += 0x3;
 	std::vector<int> result_tab;
 	for (char letter : word_to_hide) {
@@ -16,14 +18,17 @@ std::vector<int> Conversion::WordToBytesTab(std::string word_to_hide)
 			result_tab.push_back(current_letter_bytes[i]);
 		}
 	}
+	JournalManager::Instance->LogWrite(L"End of the convertion.");
 	return result_tab;
 }
 
 std::string Conversion::BytesTabToWord(std::vector<int> bytes_tab)
 {
+	JournalManager::Instance->LogWrite(L"Start converting the tab of bytes into the word to discover...");
 	std::string result;
 	if (bytes_tab.size() % 8 != 0) {
 		std::cerr << "Le nombre de bits n'est pas un multiple de 8" << std::endl;
+		JournalManager::Instance->LogWarning(L"Le nombre de bits n'est pas un multiple de 8");
 		return "";
 	}
 	for (size_t i = 0; i < bytes_tab.size(); i += 8) {
@@ -36,5 +41,6 @@ std::string Conversion::BytesTabToWord(std::vector<int> bytes_tab)
 	if (!result.empty() && result.back() == '\x03') {
 		result.erase(result.size() - 1);
 	}
+	JournalManager::Instance->LogWrite(L"End of the convertion : the word is found.");
 	return result;
 }
