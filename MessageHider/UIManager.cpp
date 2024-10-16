@@ -6,6 +6,9 @@
 
 void UIManager::Init()
 {
+	UIManager::pImage = nullptr;
+
+	journalManager = new JournalManager();
     UIManager::pImage = nullptr;
     pFileManager = new FileManager();
 }
@@ -143,15 +146,53 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
                 ShellExecute(0, 0, L"https://www.youtube.com/watch?v=zBbSH-w6L_8", 0, 0, SW_SHOW);
                 break;
 
-        default:
-            return DefWindowProc(hWnd, message, wParam, lParam);
-        }
-    }
-    break;            
-    case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hWnd, &ps);
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+	}
+	break;
+	case WM_KEYDOWN:
+	{
+		if (GetKeyState(VK_CONTROL) & 0x8000) // Vérifie si la touche Ctrl est enfoncée
+		{
+			switch (wParam)
+			{
+			case 'L': // Ctrl + L
+				this->LoadImage();
+				break;			
+			case 'J': // Ctrl + L
+					this->ShowJournal();
+					break;
+			case 'T': // Ctrl + L
+				this->journalManager->LogWrite(L"ouais");
+				break;
+			case 'D': // Ctrl + D
+				if (pImage != nullptr) {
+					this->ClickDecrypt(hWnd);
+				}
+				else
+				{
+					MessageBox(hWnd, L"Veuillez charger une image", L"Erreur", MB_OK | MB_ICONERROR);
+				}
+				break;
+			case 'C': // Ctrl + C
+				if (pImage != nullptr) {
+					this->ClickCrypt(hWnd);
+				}
+				else
+				{
+					MessageBox(hWnd, L"Veuillez charger une image", L"Erreur", MB_OK | MB_ICONERROR);
+				}
+
+				break;
+			}
+		}
+	}
+	break;
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hWnd, &ps);
 
 
         // Taille du rectangle
@@ -255,6 +296,19 @@ void UIManager::HideControls() {
     ShowWindow(hEncryptButton, SW_HIDE);
     ShowWindow(hTextBox, SW_HIDE); // Cacher la zone de texte
 }
+
+void UIManager::ShowJournal()
+{
+	// Initialiser le journal s'il n'a pas déjà été créé
+	if (!journalManager->hJournalWnd)
+	{
+		journalManager->Init(GetModuleHandle(nullptr), GetActiveWindow());
+	}
+
+	// Afficher la fenêtre du journal
+	ShowWindow(journalManager->hJournalWnd, SW_SHOW);
+}
+
 
 std::wstring UIManager::GetTextBoxContent() {
     WCHAR buffer[256]; // Buffer pour stocker le contenu

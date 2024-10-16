@@ -7,6 +7,7 @@
 #include "MessageHider.h"
 #include <objidl.h>
 #include <gdiplus.h>
+#include "JournalManager.h"
 #pragma comment (lib, "Gdiplus.lib")
 using namespace Gdiplus;
 
@@ -23,6 +24,8 @@ public:
 	Image* pImage;
 	FileManager* pFileManager;
 
+	JournalManager* journalManager; // Gestionnaire du journal
+
 	UIManager() = default;
 
 	void Init();
@@ -30,6 +33,9 @@ public:
 	void CreateTextBox(HWND hWnd); 
 	void ShowControls(); 
 	void HideControls(); 
+
+	void ShowJournal();
+
 	std::wstring GetTextBoxContent();
 
 
