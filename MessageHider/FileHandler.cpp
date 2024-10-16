@@ -98,6 +98,11 @@ std::string FileHandler::ConvertWStringToString(std::wstring& wstr)
 	return converter.to_bytes(wstr);
 }
 
+std::wstring FileHandler::ConvertStringToWString(std::string& string)
+{
+	return std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(string);
+}
+
 void FileHandler::AddFilter(Filter* newFilter)
 {
 	filters.emplace_back(newFilter);

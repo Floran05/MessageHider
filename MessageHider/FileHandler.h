@@ -41,10 +41,9 @@ public:
 	static WCHAR* ConvertToWide(const char* charStr);
 	static std::string ConvertLPWSTRToString(LPWSTR& lpwStr);
 	static std::string ConvertWStringToString(std::wstring& wstr);
+	static std::wstring ConvertStringToWString(std::string& str);
 
 	void AddFilter(Filter* newFilter);
 	void ApplyFilters();
 
 };
-
-//01000000 00000000 00010011

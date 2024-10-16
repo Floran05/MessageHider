@@ -62,7 +62,7 @@ void UIManager::ClickDecrypt(HWND hWnd)
 {
     std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
     std::string message = pFileManager->Decrypt();
-    SetWindowTextW(hTextBox, content.c_str());
+    SetWindowTextW(hTextBox, FileHandler::ConvertStringToWString(message).c_str());
     MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
 }
 
