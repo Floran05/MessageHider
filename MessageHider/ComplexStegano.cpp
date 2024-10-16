@@ -63,9 +63,6 @@ std::string ComplexStegano::Decrypt(unsigned char* pixel_tab, const size_t len_p
 		{
 			return Conversion::BytesTabToWord(bytes_tab);
 		}
-		else {
-			return "[Pas de fin de message trouvée]";
-		}
 	}
-	return Conversion::BytesTabToWord(bytes_tab);
+	return "[Pas de fin de message trouvee]";
 }

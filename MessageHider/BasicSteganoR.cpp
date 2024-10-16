@@ -53,9 +53,6 @@ std::string BasicSteganoR::Decrypt(unsigned char* pixel_tab, const size_t len_pi
 		{
 			return Conversion::BytesTabToWord(bytes_tab);
 		}
-		else {
-			return "[Pas de fin de message trouvée]";
-		}
 	}
-	return Conversion::BytesTabToWord(bytes_tab);
+	return "[Pas de fin de message trouvee]";
 }
