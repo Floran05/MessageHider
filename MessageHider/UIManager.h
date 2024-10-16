@@ -22,12 +22,16 @@ public:
 	UIManager() = default;
 
 	void Init();
-	void LoadImage();
 	void CreateButtons(HWND hWnd);
 	void CreateTextBox(HWND hWnd); 
 	void ShowControls(); 
 	void HideControls(); 
 	std::wstring GetTextBoxContent();
+
+
+	void LoadImage();
+	void ClickDecrypt(HWND hWnd);
+	void ClickCrypt(HWND hWnd);
 
 
 	LRESULT CALLBACK ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HINSTANCE hInst);

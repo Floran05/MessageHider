@@ -37,6 +37,7 @@ void UIManager::LoadImage()
         CreateTextBox(hWnd);
         ShowControls();
 
+
     }
 
 
@@ -46,6 +47,18 @@ void UIManager::LoadImage()
     InvalidateRect(hWnd, nullptr, TRUE); 
 
 
+}
+
+void UIManager::ClickDecrypt(HWND hWnd)
+{
+    std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
+    MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
+}
+
+void UIManager::ClickCrypt(HWND hWnd)
+{
+    std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
+    MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
 }
 
 INT_PTR UIManager::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -83,16 +96,35 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
             break;
         case 2: // Identifiant du bouton "Décrypter"
         {
-            std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
-            MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
+            ClickDecrypt(hWnd);
         }
         break;
         case 3: // Identifiant du bouton "Crypter"
         {
-            std::wstring content = this->GetTextBoxContent(); // Récupérer le contenu de la zone de texte
-            MessageBox(hWnd, content.c_str(), L"Texte dans la zone de texte", MB_OK); // Afficher le contenu
+            ClickCrypt(hWnd);
         }
         break;
+        case ID_FICHIER_CHARGERUNEIMAGE:
+        {
+            HWND hMyButton = GetDlgItem(hWnd, 32772);
+            if (hMyButton)
+            {
+                // Activer le bouton
+                EnableWindow(hMyButton, TRUE);
+            }
+            else
+            {
+                MessageBox(hWnd, L"Le bouton n'a pas été trouvé", L"Erreur", MB_OK | MB_ICONERROR);
+            }
+            this->LoadImage(); }
+            break;
+        case ID_FICHIER_CRYPTERUNEIMAGE: 
+            this->ClickCrypt(hWnd);
+
+            break;
+        case ID_FICHIER_DECRYPTERUNEIMAGE:
+            this->ClickDecrypt(hWnd);
+            break;
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;
@@ -206,6 +238,8 @@ void UIManager::ShowControls() {
     ShowWindow(hDecryptButton, SW_SHOW);
     ShowWindow(hEncryptButton, SW_SHOW);
     ShowWindow(hTextBox, SW_SHOW); // Afficher la zone de texte
+
+
 }
 
 void UIManager::HideControls() {
