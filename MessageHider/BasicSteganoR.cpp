@@ -11,7 +11,7 @@ BasicSteganoR::BasicSteganoR()
 
 int BasicSteganoR::MessageMaxLenght(const size_t len_pixel_tab, int nb_bytes_per_pixel)
 {
-	return len_pixel_tab * nb_bytes_per_pixel;
+	return len_pixel_tab / 8;
 }
 
 void BasicSteganoR::Encrypt(unsigned char* pixel_tab, const size_t len_pixel_tab, int nb_bytes_per_pixel, std::string word_to_hide)
@@ -52,6 +52,9 @@ std::string BasicSteganoR::Decrypt(unsigned char* pixel_tab, const size_t len_pi
 			&& bytes_tab[bytes_tab.size() - 1] == 1)
 		{
 			return Conversion::BytesTabToWord(bytes_tab);
+		}
+		else {
+			return "[Pas de fin de message trouvée]";
 		}
 	}
 	return Conversion::BytesTabToWord(bytes_tab);
