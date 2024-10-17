@@ -9,7 +9,7 @@ void UIManager::Init()
 	UIManager::pImage = nullptr;
 	journalManager = new JournalManager();
 	pFileManager = new FileManager();
-	pFileManager->SelectAlgorithm(SteganoAlgorithm::BasicSteganoR);
+	pFileManager->SelectAlgorithm(ESteganoAlgorithm::BasicSteganoR);
 
 	// Ajouter l'appel pour créer le dropdown et le bouton
 }
@@ -76,10 +76,6 @@ void UIManager::ClickDecrypt(HWND hWnd)
 #include <string>
 #include <algorithm> // Pour std::find_last_of
 #include <codecvt>   // Pour la conversion entre std::string et std::wstring
-#include "BlurFilter.h"
-#include "GrayscaleFilter.h"
-#include "NegativeFilter.h"
-#include "SepiaFilter.h"
 
 void UIManager::ClickCrypt(HWND hWnd) {
 	// Vérifier si imagePath est défini
@@ -132,18 +128,31 @@ void UIManager::ClickCrypt(HWND hWnd) {
 		int selectedIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
 ;		switch (selectedIndex)
 		{
+		case 0: // NO FILTER
+			break;
 		case 1: // GRAY
+			pFileManager->AddFilter(EFilterType::Grayscale);
 			break;
 		case 2: // NEGATIVE
+			pFileManager->AddFilter(EFilterType::Negative);
 			break;
 		case 3: // SEPIA
+			pFileManager->AddFilter(EFilterType::Sepia);
 			break;
 		case 4: // BLUR
+			pFileManager->AddFilter(EFilterType::Blur);
+			break;
+		case 5: // SHARPENING
+			pFileManager->AddFilter(EFilterType::Sharpening);
+			break;
+		case 6: // EDGE DETECTION
+			pFileManager->AddFilter(EFilterType::EdgeDetection);
 			break;
 		default:
 			break;
 		}
 
+		pFileManager->ApplyFilters();
 		pFileManager->Encrypt(FileHandler::ConvertWStringToString(content));
 	}
 }
@@ -402,7 +411,7 @@ void UIManager::CreateDropdownAndButton(HWND hWnd)
 		50,  // Position X
 		400, // Position Y
 		150, // Largeur
-		100, // Hauteur
+		160, // Hauteur
 		hWnd, // Fenêtre parent
 		nullptr, // Pas d'ID pour ce cas
 		nullptr, // Pas d'instance spécifique
@@ -410,10 +419,13 @@ void UIManager::CreateDropdownAndButton(HWND hWnd)
 	);
 
 	// Ajouter les éléments dans le dropdown
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Aucun");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nuance de gris");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Negatif");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Sepia");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Flou");
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nettete");
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Detection de contours");
 
 
 	// Sélectionner le premier élément par défaut

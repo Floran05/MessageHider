@@ -9,11 +9,21 @@
 class FileHandler;
 class AlgoStegano;
 
-enum class SteganoAlgorithm
+enum class ESteganoAlgorithm
 {
 	BasicSteganoR,
 	ComplexStegano,
 	None
+};
+
+enum class EFilterType
+{
+	Blur,
+	Negative,
+	Sepia,
+	Grayscale,
+	Sharpening,
+	EdgeDetection
 };
 
 class FileManager
@@ -27,7 +37,7 @@ protected:
 
 	FileHandler* mFileHandler;
 	Gdiplus::Bitmap* mImage;
-	SteganoAlgorithm mSelectedAlgorithm;
+	ESteganoAlgorithm mSelectedAlgorithm;
 
 	AlgoStegano* mSteganoAlgorithm;
 	std::wstring path;
@@ -40,7 +50,9 @@ public:
 	void Encrypt(const std::string& message);
 	int GetMessageMaxLenght();
 
-	void SelectAlgorithm(const SteganoAlgorithm& algo);
+	void SelectAlgorithm(const ESteganoAlgorithm& algo);
+	void AddFilter(const EFilterType& type);
+	void ApplyFilters();
 
 };
 

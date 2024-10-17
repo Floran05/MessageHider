@@ -9,13 +9,17 @@
 #include "ComplexStegano.h"
 #include "JournalManager.h"
 
-#include "Filter.h"
 #include "BlurFilter.h"
+#include "GrayscaleFilter.h"
+#include "NegativeFilter.h"
+#include "SepiaFilter.h"
+#include "SharpeningFilter.h"
+#include "EdgeDetectionFilter.h"
 
 FileManager::FileManager()
 	: mFileHandler(nullptr)
 	, mImage(nullptr)
-	, mSelectedAlgorithm(SteganoAlgorithm::None)
+	, mSelectedAlgorithm(ESteganoAlgorithm::None)
 	, mSteganoAlgorithm(nullptr)
 {
 
@@ -57,7 +61,7 @@ void FileManager::SetPath(const std::wstring& filename)
 std::string FileManager::Decrypt()
 {
 	std::string message;
-	if (mSelectedAlgorithm == SteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
+	if (mSelectedAlgorithm == ESteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
 	{
 		JournalManager::Instance->LogError(L"Can't decrypt message : no algorithm selected");
 		return message;
@@ -73,15 +77,11 @@ std::string FileManager::Decrypt()
 
 void FileManager::Encrypt(const std::string& message)
 {
-	if (mSelectedAlgorithm == SteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
+	if (mSelectedAlgorithm == ESteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
 	{
 		JournalManager::Instance->LogError(L"Can't encrypt the message : no algorithm selected");
 		return;
 	}
-
-	BlurFilter* f = new BlurFilter();
-	mFileHandler->AddFilter(f);
-	mFileHandler->ApplyFilters();
 
 	mSteganoAlgorithm->Encrypt(
 		mFileHandler->GetPixels(),
@@ -98,16 +98,50 @@ int FileManager::GetMessageMaxLenght()
 		mFileHandler->GetLastLoadedFileBitsPerPixel() / 8);
 }
 
-void FileManager::SelectAlgorithm(const SteganoAlgorithm& algo)
+void FileManager::SelectAlgorithm(const ESteganoAlgorithm& algo)
 {
 	mSelectedAlgorithm = algo;
 	switch (algo)
 	{
-	case SteganoAlgorithm::BasicSteganoR:
+	case ESteganoAlgorithm::BasicSteganoR:
 		mSteganoAlgorithm = new BasicSteganoR();
 		break;
-	case SteganoAlgorithm::ComplexStegano:
+	case ESteganoAlgorithm::ComplexStegano:
 		mSteganoAlgorithm = new ComplexStegano();
 		break;
 	}
+}
+
+void FileManager::AddFilter(const EFilterType& type)
+{
+	Filter* f = nullptr;
+	switch (type)
+	{
+	case EFilterType::Blur:
+		f = new BlurFilter();
+		break;
+	case EFilterType::Negative:
+		f = new NegativeFilter();
+		break;
+	case EFilterType::Sepia:
+		f = new SepiaFilter();
+		break;
+	case EFilterType::Grayscale:
+		f = new GrayscaleFilter();
+		break;
+	case EFilterType::Sharpening:
+		f = new SharpeningFilter();
+		break;
+	case EFilterType::EdgeDetection:
+		f = new EdgeDetectionFilter();
+		break;
+	}
+	if (f == nullptr) return;
+
+	mFileHandler->AddFilter(f);
+}
+
+void FileManager::ApplyFilters()
+{
+	mFileHandler->ApplyFilters();
 }
