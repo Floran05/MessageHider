@@ -10,7 +10,10 @@ void UIManager::Init()
 	journalManager = new JournalManager();
 	pFileManager = new FileManager();
 	pFileManager->SelectAlgorithm(SteganoAlgorithm::BasicSteganoR);
+
+	// Ajouter l'appel pour créer le dropdown et le bouton
 }
+
 
 void UIManager::LoadImage()
 {
@@ -45,6 +48,7 @@ void UIManager::LoadImage()
 		// Créer et afficher les boutons
 		CreateButtons(hWnd);
 		CreateTextBox(hWnd);
+		CreateDropdownAndButton(hWnd);
 
 		ShowControls();
 
@@ -188,6 +192,19 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			}
 		}
 			  break;
+		case 5:
+		{
+			int selectedIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
+			if (selectedIndex != CB_ERR)
+			{
+				// Convertir l'index en chaîne de caractères
+				std::wstring indexText = L"Index sélectionné : " + std::to_wstring(selectedIndex);
+
+				// Afficher une boîte de message avec l'index sélectionné
+				MessageBox(hWnd, indexText.c_str(), L"Index de l'option", MB_OK);
+			}
+			break;
+		}
 		case ID_FICHIER_CHARGERUNEIMAGE:
 		{
 			this->LoadImage(); }
@@ -212,8 +229,8 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
-	}
-	break;
+		}
+		break;
 	case WM_NOTIFY: // Intercepter les notifications
 	{
 		if (((LPNMHDR)lParam)->idFrom == (UINT_PTR)hTextBox && ((LPNMHDR)lParam)->code == EN_CHANGE)
@@ -323,7 +340,8 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
-}
+	}
+
 
 
 void UIManager::CreateButtons(HWND hWnd) {
@@ -332,7 +350,7 @@ void UIManager::CreateButtons(HWND hWnd) {
 		L"BUTTON",  // Class name
 		L"Décrypter",  // Button text
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
-		20,  // Position X
+		50,  // Position X
 		100,  // Position Y
 		100,  // Width
 		30,  // Height
@@ -345,7 +363,7 @@ void UIManager::CreateButtons(HWND hWnd) {
 		L"BUTTON",  // Class name
 		L"Crypter",  // Button text
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
-		170,  // Position X
+		200,  // Position X
 		100,  // Position Y
 		100,  // Width
 		30,  // Height
@@ -354,6 +372,50 @@ void UIManager::CreateButtons(HWND hWnd) {
 		nullptr,  // Instance handle
 		nullptr); // No additional parameters
 }
+
+void UIManager::CreateDropdownAndButton(HWND hWnd)
+{
+	// Créer le dropdown (combobox)
+	hDropdown = CreateWindow(
+		L"COMBOBOX",   // Classe de la combobox
+		nullptr,       // Pas de texte initial
+		WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, // Styles
+		50,  // Position X
+		400, // Position Y
+		150, // Largeur
+		100, // Hauteur
+		hWnd, // Fenêtre parent
+		nullptr, // Pas d'ID pour ce cas
+		nullptr, // Pas d'instance spécifique
+		nullptr  // Pas de paramètres additionnels
+	);
+
+	// Ajouter les éléments dans le dropdown
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nuance de gris");
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Negatif");
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Sepia");
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Sharpening");
+
+
+	// Sélectionner le premier élément par défaut
+	SendMessage(hDropdown, CB_SETCURSEL, 0, 0);
+
+	// Créer le bouton à côté du dropdown
+	hDropdownButton = CreateWindow(
+		L"BUTTON",     // Classe du bouton
+		L"Valider",    // Texte du bouton
+		WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, // Styles
+		270, // Position X
+		400, // Position Y
+		80,  // Largeur
+		30,  // Hauteur
+		hWnd, // Fenêtre parent
+		(HMENU)5, // ID du bouton pour WM_COMMAND
+		nullptr, // Pas d'instance spécifique
+		nullptr  // Pas de paramètres additionnels
+	);
+}
+
 
 void UIManager::ShowControls() {
 	ShowWindow(hDecryptButton, SW_SHOW);

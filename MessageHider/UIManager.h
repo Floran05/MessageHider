@@ -25,6 +25,8 @@ public:
 	std::string imagePath;
 	FileManager* pFileManager; 
 	HWND hCharCountLabel;
+	HWND hDropdown; // Handle pour la combobox
+	HWND hDropdownButton; // Handle pour le bouton associé
 
 	JournalManager* journalManager; // Gestionnaire du journal
 
@@ -33,6 +35,8 @@ public:
 	void Init();
 	void CreateButtons(HWND hWnd);
 	void CreateTextBox(HWND hWnd); 
+	void CreateDropdownAndButton(HWND hWnd);
+
 	void ShowControls(); 
 	void HideControls(); 
 
