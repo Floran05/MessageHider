@@ -126,7 +126,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, // Styles du bouton
         50,         // Position x
         20,         // Position y
-        250,        // Largeur
+        300,        // Largeur
         30,         // Hauteur
         hWnd,       // Handle de la fenêtre parente
         (HMENU)1,   // Identifiant du bouton
