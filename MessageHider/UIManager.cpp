@@ -76,6 +76,10 @@ void UIManager::ClickDecrypt(HWND hWnd)
 #include <string>
 #include <algorithm> // Pour std::find_last_of
 #include <codecvt>   // Pour la conversion entre std::string et std::wstring
+#include "BlurFilter.h"
+#include "GrayscaleFilter.h"
+#include "NegativeFilter.h"
+#include "SepiaFilter.h"
 
 void UIManager::ClickCrypt(HWND hWnd) {
 	// Vérifier si imagePath est défini
@@ -124,6 +128,22 @@ void UIManager::ClickCrypt(HWND hWnd) {
 		pFileManager->SetPath(filePath);
 
 		std::wstring content = this->GetTextBoxContent();
+
+		int selectedIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
+;		switch (selectedIndex)
+		{
+		case 1: // GRAY
+			break;
+		case 2: // NEGATIVE
+			break;
+		case 3: // SEPIA
+			break;
+		case 4: // BLUR
+			break;
+		default:
+			break;
+		}
+
 		pFileManager->Encrypt(FileHandler::ConvertWStringToString(content));
 	}
 }
@@ -192,19 +212,18 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			}
 		}
 			  break;
-		case 5:
-		{
-			int selectedIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
-			if (selectedIndex != CB_ERR)
-			{
-				// Convertir l'index en chaîne de caractères
-				std::wstring indexText = L"Index sélectionné : " + std::to_wstring(selectedIndex);
+		//case 5:
+		//{
+		//	if (selectedIndex != CB_ERR)
+		//	{
+		//		// Convertir l'index en chaîne de caractères
+		//		std::wstring indexText = L"Index sélectionné : " + std::to_wstring(selectedIndex);
 
-				// Afficher une boîte de message avec l'index sélectionné
-				MessageBox(hWnd, indexText.c_str(), L"Index de l'option", MB_OK);
-			}
-			break;
-		}
+		//		// Afficher une boîte de message avec l'index sélectionné
+		//		MessageBox(hWnd, indexText.c_str(), L"Index de l'option", MB_OK);
+		//	}
+		//	break;
+		//}
 		case ID_FICHIER_CHARGERUNEIMAGE:
 		{
 			this->LoadImage(); }
@@ -394,7 +413,7 @@ void UIManager::CreateDropdownAndButton(HWND hWnd)
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nuance de gris");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Negatif");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Sepia");
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Sharpening");
+	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Flou");
 
 
 	// Sélectionner le premier élément par défaut

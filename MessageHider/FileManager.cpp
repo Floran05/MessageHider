@@ -9,6 +9,7 @@
 #include "ComplexStegano.h"
 #include "JournalManager.h"
 
+#include "Filter.h"
 #include "BlurFilter.h"
 
 FileManager::FileManager()
@@ -51,6 +52,7 @@ void FileManager::SetPath(const std::wstring& filename)
 {
 	FileManager::path = filename;
 }
+
 
 std::string FileManager::Decrypt()
 {
