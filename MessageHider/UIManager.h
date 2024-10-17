@@ -27,6 +27,7 @@ public:
 	FileManager* pFileManager; 
 	HWND hCharCountLabel;
 	HWND hDropdown; // Handle pour la combobox
+	HWND hDropdownAlgo; // Handle pour la combobox
 	HWND hDropdownButton; // Handle pour le bouton associé
 
 	JournalManager* journalManager; // Gestionnaire du journal

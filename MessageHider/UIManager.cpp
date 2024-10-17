@@ -107,7 +107,8 @@ void UIManager::ClickCrypt(HWND hWnd) {
 		std::wstring content = this->GetTextBoxContent();
 
 		int selectedIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
-		;		switch (selectedIndex)
+		;		
+		switch (selectedIndex)
 		{
 		case 0: // NO FILTER
 			break;
@@ -132,8 +133,19 @@ void UIManager::ClickCrypt(HWND hWnd) {
 		default:
 			break;
 		}
-
 		pFileManager->ApplyFilters();
+
+		int selectedAlgoIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
+		switch (selectedAlgoIndex)
+		{
+		case 0: // Algo normal
+			break;
+		case 1: // Algo Complexe
+			break;
+		default:
+			break;
+		}
+
 		pFileManager->Encrypt(FileHandler::ConvertWStringToString(content));
 	}
 }
@@ -169,18 +181,25 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		{
 		case 1: // Load Image
 			this->LoadImage();
+			SetFocus(hWnd);
 			break;
 		case 2: // Décrypter
 		{
 			ClickDecrypt(hWnd);
+			SetFocus(hWnd);
 		}
 		break;
 		case 3: // Crypter
 		{
 			ClickCrypt(hWnd);
+			SetFocus(hWnd);
 		}
 		break;
 		case 4: {
+			if (HIWORD(wParam) == WM_KEYDOWN) {
+				if (wParam == 'L')
+					JournalManager::Instance->LogWrite(L"ouais");
+			}
 			if (HIWORD(wParam) == EN_CHANGE) {
 				int length = GetWindowTextLength(hTextBox);
 				std::wstring charCountText = L"Caractères: " + std::to_wstring(length) + L"/100";
@@ -194,14 +213,17 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			  break;
 		case ID_FICHIER_CHARGERUNEIMAGE:
 		{
-			this->LoadImage(); }
+			this->LoadImage();
+			SetFocus(hWnd);
+		}
 		break;
 		case ID_FICHIER_CRYPTERUNEIMAGE:
 			this->ClickCrypt(hWnd);
-
+			SetFocus(hWnd);
 			break;
 		case ID_FICHIER_DECRYPTERUNEIMAGE:
 			this->ClickDecrypt(hWnd);
+			SetFocus(hWnd);
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -367,20 +389,28 @@ void UIManager::CreateDropdownAndButton(HWND hWnd)
 	// Sélectionner le premier élément par défaut
 	SendMessage(hDropdown, CB_SETCURSEL, 0, 0);
 
-	// Créer le bouton à côté du dropdown
-	hDropdownButton = CreateWindow(
-		L"BUTTON",     // Classe du bouton
-		L"Valider",    // Texte du bouton
-		WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, // Styles
-		270, // Position X
+
+	hDropdownAlgo = CreateWindow(
+		L"COMBOBOX",   // Classe de la combobox
+		nullptr,       // Pas de texte initial
+		WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, // Styles
+		200,  // Position X
 		400, // Position Y
-		80,  // Largeur
-		30,  // Hauteur
+		150, // Largeur
+		160, // Hauteur
 		hWnd, // Fenêtre parent
-		(HMENU)5, // ID du bouton pour WM_COMMAND
+		nullptr,
 		nullptr,
 		nullptr
 	);
+
+	SendMessage(hDropdownAlgo, CB_ADDSTRING, 0, (LPARAM)L"Algo basique");
+	SendMessage(hDropdownAlgo, CB_ADDSTRING, 0, (LPARAM)L"Algo complexe");
+
+	// Sélectionner le premier élément par défaut
+	SendMessage(hDropdownAlgo, CB_SETCURSEL, 0, 0);
+
+	
 }
 
 void UIManager::ShowControls() {
