@@ -22,6 +22,7 @@ public:
 	HWND hEncryptButton;
 	HWND hTextBox; 
 	Image* pImage;
+	int ImageMaxLength;
 	std::string imagePath;
 	FileManager* pFileManager; 
 	HWND hCharCountLabel;

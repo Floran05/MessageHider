@@ -45,6 +45,7 @@ void UIManager::LoadImage()
 		std::string path = FileHandler::ConvertLPWSTRToString(ofn.lpstrFile);
 		imagePath = path;
 		pFileManager->LoadImageFromFilename(path);
+		ImageMaxLength = pFileManager->GetMessageMaxLenght();
 
 		HWND hWnd = GetActiveWindow();
 		InvalidateRect(hWnd, nullptr, TRUE);
@@ -329,7 +330,7 @@ void UIManager::CreateButtons(HWND hWnd) {
 		L"BUTTON",  // Class name
 		L"Crypter",  // Button text
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
-		200,  // Position X
+		250,  // Position X
 		100,  // Position Y
 		100,  // Width
 		30,  // Height
@@ -430,20 +431,20 @@ void UIManager::CreateTextBox(HWND hWnd) {
 		nullptr);
 
 	// Limiter le nombre de caractères à 100
-	SendMessage(hTextBox, EM_SETLIMITTEXT, 100, 0);
+	SendMessage(hTextBox, EM_SETLIMITTEXT, ImageMaxLength, 0);
 
-	// Créer un contrôle STATIC pour afficher le nombre de caractères
-	HWND hCharCountLabel = CreateWindowEx(
-		0,                    // Style étendu
-		L"STATIC",           // Class name
-		L"Caractères: 0/100",// Initial text
-		WS_CHILD | WS_VISIBLE, // Styles
-		50,                  // Position X
-		360,                 // Position Y
-		200,                 // Width
-		20,                  // Height
-		hWnd,                // Parent window
-		nullptr,
-		nullptr,
-		nullptr);
+	//// Créer un contrôle STATIC pour afficher le nombre de caractères
+	//HWND hCharCountLabel = CreateWindowEx(
+	//	0,                    // Style étendu
+	//	L"STATIC",           // Class name
+	//	L"Caractères: 0/100",// Initial text
+	//	WS_CHILD | WS_VISIBLE, // Styles
+	//	50,                  // Position X
+	//	360,                 // Position Y
+	//	200,                 // Width
+	//	20,                  // Height
+	//	hWnd,                // Parent window
+	//	nullptr,
+	//	nullptr,
+	//	nullptr);
 }
