@@ -22,7 +22,7 @@ std::vector<std::vector<float>> BlurFilter::GetKernel()
 		for (int y = -half; y <= half; ++y)
 		{
 			float expo = -(x * x + y * y) / (2 * mKernelSigma * mKernelSigma);
-			kernel[x + half][y + half] = exp(expo) / (2 * M_PI * mKernelSigma * mKernelSigma);
+			kernel[x + half][y + half] = static_cast<float>(exp(expo) / (2 * M_PI * mKernelSigma * mKernelSigma));
 			sum += kernel[x + half][y + half];
 		}
 	}
@@ -41,7 +41,7 @@ std::vector<std::vector<float>> BlurFilter::GetKernel()
 void BlurFilter::Apply(unsigned char* pixels, int width, int height, int bytesPerPixel)
 {
 	mKernelSize = 5;
-	mKernelSigma = 2.f;
+	mKernelSigma = 3.f;
 
 	JournalManager::Instance->LogWrite(L"Applying Gaussian Blur filter");
 

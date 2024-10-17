@@ -21,4 +21,5 @@ std::vector<std::vector<float>> EdgeDetectionFilter::GetKernel()
 void EdgeDetectionFilter::Apply(unsigned char* pixels, int width, int height, int bytesPerPixel)
 {
 	JournalManager::Instance->LogWrite(L"Applying Edge Detection filter");
+	KernelBasedFilter::Apply(pixels, width, height, bytesPerPixel);
 }

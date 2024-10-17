@@ -21,4 +21,5 @@ std::vector<std::vector<float>> SharpeningFilter::GetKernel()
 void SharpeningFilter::Apply(unsigned char* pixels, int width, int height, int bytesPerPixel)
 {
 	JournalManager::Instance->LogWrite(L"Applying Sharpening Filter");
+	KernelBasedFilter::Apply(pixels, width, height, bytesPerPixel);
 }

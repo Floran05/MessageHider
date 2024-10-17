@@ -45,7 +45,12 @@ void UIManager::LoadImage()
 
 		std::string path = FileHandler::ConvertLPWSTRToString(ofn.lpstrFile);
 		imagePath = path;
-		pFileManager->LoadImageFromFilename(path);
+		if (!pFileManager->LoadImageFromFilename(path))
+		{
+			MessageBox(GetActiveWindow(), L"This file format is not supported", L"Open file error", MB_OK);
+			return;
+		}
+		pFileManager->ClearFilters();
 		ImageMaxLength = pFileManager->GetMessageMaxLenght();
 
 		HWND hWnd = GetActiveWindow();
@@ -69,9 +74,31 @@ void UIManager::LoadImage()
 
 void UIManager::ClickDecrypt(HWND hWnd)
 {
-	std::wstring content = this->GetTextBoxContent();
+	int selectedAlgoIndex = static_cast<int>(SendMessage(hDropdownAlgo, CB_GETCURSEL, 0, 0));
+	switch (selectedAlgoIndex)
+	{
+	case 0: // Algo basique
+		pFileManager->SelectAlgorithm(ESteganoAlgorithm::BasicSteganoR);
+		JournalManager::Instance->LogWrite(L"Basic steganographic algorithm selected");
+		break;
+	case 1: // Algo complexe
+		pFileManager->SelectAlgorithm(ESteganoAlgorithm::ComplexStegano);
+		JournalManager::Instance->LogWrite(L"Complex steganographic algorithm selected");
+		break;
+	default:
+		break;
+	}
+
 	std::string message = pFileManager->Decrypt();
-	SetWindowTextW(hTextBox, FileHandler::ConvertStringToWString(message).c_str());
+	try
+	{
+		SetWindowTextW(hTextBox, FileHandler::ConvertStringToWString(message).c_str());
+	}
+	catch (...)
+	{
+		JournalManager::Instance->LogWarning(L"No message found");
+		SetWindowTextW(hTextBox, L"No message found");
+	}
 }
 
 void UIManager::ClickCrypt(HWND hWnd) {
@@ -113,7 +140,7 @@ void UIManager::ClickCrypt(HWND hWnd) {
 
 		std::wstring content = this->GetTextBoxContent();
 
-		int selectedIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
+		int selectedIndex = static_cast<int>(SendMessage(hDropdown, CB_GETCURSEL, 0, 0));
 		;		
 		switch (selectedIndex)
 		{
@@ -121,40 +148,36 @@ void UIManager::ClickCrypt(HWND hWnd) {
 			break;
 		case 1: // GRAY
 			pFileManager->AddFilter(EFilterType::Grayscale);
-			JournalManager::Instance->LogWrite(L"Gray filter applied");
 			break;
 		case 2: // NEGATIVE
 			pFileManager->AddFilter(EFilterType::Negative);
-			JournalManager::Instance->LogWrite(L"Negative filter applied");
 			break;
 		case 3: // SEPIA
 			pFileManager->AddFilter(EFilterType::Sepia);
-			JournalManager::Instance->LogWrite(L"Sepia filter applied");
 			break;
 		case 4: // BLUR
 			pFileManager->AddFilter(EFilterType::Blur);
-			JournalManager::Instance->LogWrite(L"Blur filter applied");
 			break;
 		case 5: // SHARPENING
 			pFileManager->AddFilter(EFilterType::Sharpening);
-			JournalManager::Instance->LogWrite(L"Sharpening filter applied");
 			break;
 		case 6: // EDGE DETECTION
 			pFileManager->AddFilter(EFilterType::EdgeDetection);
-			JournalManager::Instance->LogWrite(L"Edge detection filter applied");
 			break;
 		default:
 			break;
 		}
 		pFileManager->ApplyFilters();
 
-		int selectedAlgoIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
+		int selectedAlgoIndex = static_cast<int>(SendMessage(hDropdownAlgo, CB_GETCURSEL, 0, 0));
 		switch (selectedAlgoIndex)
 		{
 		case 0: // Algo basique
+			pFileManager->SelectAlgorithm(ESteganoAlgorithm::BasicSteganoR);
 			JournalManager::Instance->LogWrite(L"Basic steganographic algorithm selected");
 			break;
 		case 1: // Algo complexe
+			pFileManager->SelectAlgorithm(ESteganoAlgorithm::ComplexStegano);
 			JournalManager::Instance->LogWrite(L"Complex steganographic algorithm selected");
 			break;
 		default:

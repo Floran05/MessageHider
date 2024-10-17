@@ -89,9 +89,21 @@ WCHAR* FileHandler::ConvertToWide(const char* charStr)
 
 std::string FileHandler::ConvertLPWSTRToString(LPWSTR& lpwStr)
 {
-	std::wstring wstr(lpwStr);
-	std::string outStr(wstr.begin(), wstr.end());
-	return outStr;
+	if (!lpwStr)
+	{
+		return "";
+	}
+
+	int len = lstrlenW(lpwStr);
+	int multibyteLen = WideCharToMultiByte(CP_UTF8, 0, lpwStr, len, NULL, 0, NULL, NULL);
+
+	std::string out(multibyteLen, 0);
+	WideCharToMultiByte(CP_UTF8, 0, lpwStr, len, &out[0], multibyteLen, NULL, NULL);
+
+	/*std::wstring wstr(lpwStr);
+	std::string outStr(wstr.begin(), wstr.end());*/
+	
+	return out;
 }
 
 std::string FileHandler::ConvertWStringToString(std::wstring& wstr)
@@ -118,4 +130,9 @@ void FileHandler::ApplyFilters()
 	{
 		filter->Apply(mLastLoadedFilePixels, mLastLoadedFileWidth, mLastLoadedFileHeight, mLastLoadedFileBitsPerPixel / 8);
 	}
+}
+
+void FileHandler::ClearFilters()
+{
+	filters.clear();
 }

@@ -29,7 +29,7 @@ FileManager::~FileManager()
 {
 }
 
-void FileManager::LoadImageFromFilename(const std::string& filename)
+bool FileManager::LoadImageFromFilename(const std::string& filename)
 {
 	std::string fn(filename);
 	std::string ext = fn.substr(fn.find_last_of(".") + 1);
@@ -46,10 +46,11 @@ void FileManager::LoadImageFromFilename(const std::string& filename)
 	else
 	{
 		JournalManager::Instance->LogWrite(L"Can't load image : this format is not supported (" + FileHandler::ConvertStringToWString(ext) + L")");
-		return;
+		return false;
 	}
 
 	mFileHandler->Read(filename.c_str());
+	return true;
 }
 
 void FileManager::SetPath(const std::wstring& filename)
@@ -144,4 +145,9 @@ void FileManager::AddFilter(const EFilterType& type)
 void FileManager::ApplyFilters()
 {
 	mFileHandler->ApplyFilters();
+}
+
+void FileManager::ClearFilters()
+{
+	mFileHandler->ClearFilters();
 }

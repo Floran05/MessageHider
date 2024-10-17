@@ -44,7 +44,7 @@ protected:
 
 public:
 
-	void LoadImageFromFilename(const std::string& filename);
+	bool LoadImageFromFilename(const std::string& filename);
 	void SetPath(const std::wstring& filename);
 	std::string Decrypt();
 	void Encrypt(const std::string& message);
@@ -53,6 +53,7 @@ public:
 	void SelectAlgorithm(const ESteganoAlgorithm& algo);
 	void AddFilter(const EFilterType& type);
 	void ApplyFilters();
+	void ClearFilters();
 
 };
 

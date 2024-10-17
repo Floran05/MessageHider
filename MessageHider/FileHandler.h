@@ -45,5 +45,6 @@ public:
 
 	void AddFilter(Filter* newFilter);
 	void ApplyFilters();
+	void ClearFilters();
 
 };

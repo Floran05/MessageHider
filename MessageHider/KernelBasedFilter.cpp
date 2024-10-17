@@ -25,7 +25,7 @@ void KernelBasedFilter::Apply(unsigned char* pixels, int width, int height, int 
 
 	unsigned char* blurredPixels = new unsigned char[bytesCount];
 
-	int halfKernelSize = kernel.size() / 2;
+	int halfKernelSize = static_cast<int>(kernel.size() / 2);
 	for (int x = halfKernelSize; x < width - halfKernelSize; ++x)
 	{
 		for (int y = halfKernelSize; y < height - halfKernelSize; ++y)
@@ -43,9 +43,9 @@ void KernelBasedFilter::Apply(unsigned char* pixels, int width, int height, int 
 			}
 
 			int target = x * bytesPerPixel + y * width * bytesPerPixel;
-			blurredPixels[target] = ClampByte(sumR);
-			blurredPixels[target + 1] = ClampByte(sumG);
-			blurredPixels[target + 2] = ClampByte(sumB);
+			blurredPixels[target] = ClampByte(static_cast<int>(sumR));
+			blurredPixels[target + 1] = ClampByte(static_cast<int>(sumG));
+			blurredPixels[target + 2] = ClampByte(static_cast<int>(sumB));
 			blurredPixels[target + 3] = pixels[target + 3];
 		}
 	}
