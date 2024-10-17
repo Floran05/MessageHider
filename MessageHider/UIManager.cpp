@@ -3,6 +3,7 @@
 
 #include "FileManager.h"
 #include "FileHandler.h"
+#include "JournalManager.h"
 #include <commdlg.h>
 #include <string>
 #include <algorithm>
@@ -49,9 +50,15 @@ void UIManager::LoadImage()
 
 		HWND hWnd = GetActiveWindow();
 		InvalidateRect(hWnd, nullptr, TRUE);
+		JournalManager::Instance->LogWrite(L"Window created.");
 		CreateButtons(hWnd);
+		JournalManager::Instance->LogWrite(L"Encrypt button created.");
+		JournalManager::Instance->LogWrite(L"Decrypt button created.");
 		CreateTextBox(hWnd);
+		JournalManager::Instance->LogWrite(L"Textbox created.");
 		CreateDropdownAndButton(hWnd);
+		JournalManager::Instance->LogWrite(L"Filter dropdown created.");
+		JournalManager::Instance->LogWrite(L"Algorithm dropdown created.");
 
 		ShowControls();
 	}
@@ -114,21 +121,27 @@ void UIManager::ClickCrypt(HWND hWnd) {
 			break;
 		case 1: // GRAY
 			pFileManager->AddFilter(EFilterType::Grayscale);
+			JournalManager::Instance->LogWrite(L"Gray filter applied");
 			break;
 		case 2: // NEGATIVE
 			pFileManager->AddFilter(EFilterType::Negative);
+			JournalManager::Instance->LogWrite(L"Negative filter applied");
 			break;
 		case 3: // SEPIA
 			pFileManager->AddFilter(EFilterType::Sepia);
+			JournalManager::Instance->LogWrite(L"Sepia filter applied");
 			break;
 		case 4: // BLUR
 			pFileManager->AddFilter(EFilterType::Blur);
+			JournalManager::Instance->LogWrite(L"Blur filter applied");
 			break;
 		case 5: // SHARPENING
 			pFileManager->AddFilter(EFilterType::Sharpening);
+			JournalManager::Instance->LogWrite(L"Sharpening filter applied");
 			break;
 		case 6: // EDGE DETECTION
 			pFileManager->AddFilter(EFilterType::EdgeDetection);
+			JournalManager::Instance->LogWrite(L"Edge detection filter applied");
 			break;
 		default:
 			break;
@@ -138,9 +151,11 @@ void UIManager::ClickCrypt(HWND hWnd) {
 		int selectedAlgoIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
 		switch (selectedAlgoIndex)
 		{
-		case 0: // Algo normal
+		case 0: // Algo basique
+			JournalManager::Instance->LogWrite(L"Basic steganographic algorithm selected");
 			break;
-		case 1: // Algo Complexe
+		case 1: // Algo complexe
+			JournalManager::Instance->LogWrite(L"Complex steganographic algorithm selected");
 			break;
 		default:
 			break;
@@ -196,10 +211,6 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		}
 		break;
 		case 4: {
-			if (HIWORD(wParam) == WM_KEYDOWN) {
-				if (wParam == 'L')
-					JournalManager::Instance->LogWrite(L"ouais");
-			}
 			if (HIWORD(wParam) == EN_CHANGE) {
 				int length = GetWindowTextLength(hTextBox);
 				std::wstring charCountText = L"Caractères: " + std::to_wstring(length) + L"/100";
@@ -259,9 +270,11 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			{
 			case 'L': // Ctrl + L
 				this->LoadImage();
+				JournalManager::Instance->LogWrite(L"Shortcut used");
 				break;
 			case 'J': // Ctrl + L
 				this->ShowJournal();
+				JournalManager::Instance->LogWrite(L"Shortcut used");
 				break;
 			case 'D': // Ctrl + D
 				if (pImage != nullptr)
@@ -431,6 +444,7 @@ void UIManager::ShowJournal()
 	if (!journalManager->hJournalWnd)
 		JournalManager::Instance->Init(GetModuleHandle(nullptr), GetActiveWindow());
 	ShowWindow(journalManager->hJournalWnd, SW_SHOW);
+	JournalManager::Instance->LogWrite(L"Journal opened.");
 }
 
 void UIManager::PrintText(LPCWSTR message)
@@ -462,19 +476,4 @@ void UIManager::CreateTextBox(HWND hWnd) {
 
 	// Limiter le nombre de caractères à 100
 	SendMessage(hTextBox, EM_SETLIMITTEXT, ImageMaxLength, 0);
-
-	//// Créer un contrôle STATIC pour afficher le nombre de caractères
-	//HWND hCharCountLabel = CreateWindowEx(
-	//	0,                    // Style étendu
-	//	L"STATIC",           // Class name
-	//	L"Caractères: 0/100",// Initial text
-	//	WS_CHILD | WS_VISIBLE, // Styles
-	//	50,                  // Position X
-	//	360,                 // Position Y
-	//	200,                 // Width
-	//	20,                  // Height
-	//	hWnd,                // Parent window
-	//	nullptr,
-	//	nullptr,
-	//	nullptr);
 }
