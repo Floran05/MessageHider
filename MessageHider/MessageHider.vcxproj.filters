@@ -81,6 +81,12 @@
     <ClInclude Include="EdgeDetectionFilter.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="KernelBasedFilter.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="F5Stegano.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MessageHider.cpp">
@@ -138,6 +144,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="EdgeDetectionFilter.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelBasedFilter.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="F5Stegano.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
