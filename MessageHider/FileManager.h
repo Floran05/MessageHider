@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <gdiplus.h>
 #pragma comment (lib, "Gdiplus.lib")
+#include <Filter.h>
 
 class FileHandler;
 class AlgoStegano;
