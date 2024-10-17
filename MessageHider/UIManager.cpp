@@ -3,14 +3,14 @@
 
 #include "FileManager.h"
 #include "FileHandler.h"
-#include <commdlg.h> 
+#include <commdlg.h>
 #include <string>
-#include <algorithm> 
+#include <algorithm>
 
-#include <commdlg.h> 
+#include <commdlg.h>
 #include <string>
-#include <algorithm> 
-#include <codecvt>   
+#include <algorithm>
+#include <codecvt>
 
 void UIManager::Init()
 {
@@ -20,10 +20,8 @@ void UIManager::Init()
 	pFileManager->SelectAlgorithm(ESteganoAlgorithm::BasicSteganoR);
 }
 
-
 void UIManager::LoadImage()
 {
-
 	OPENFILENAME ofn;
 	WCHAR szFile[260];
 
@@ -40,7 +38,6 @@ void UIManager::LoadImage()
 	ofn.lpstrInitialDir = nullptr;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-
 	if (GetOpenFileName(&ofn)) {
 		delete pImage;
 		pImage = new Gdiplus::Image(ofn.lpstrFile);
@@ -56,14 +53,10 @@ void UIManager::LoadImage()
 		CreateDropdownAndButton(hWnd);
 
 		ShowControls();
-
-
 	}
 	//redraw
 	HWND hWnd = GetActiveWindow();
 	InvalidateRect(hWnd, nullptr, TRUE);
-
-
 }
 
 void UIManager::ClickDecrypt(HWND hWnd)
@@ -72,7 +65,6 @@ void UIManager::ClickDecrypt(HWND hWnd)
 	std::string message = pFileManager->Decrypt();
 	SetWindowTextW(hTextBox, FileHandler::ConvertStringToWString(message).c_str());
 }
-
 
 void UIManager::ClickCrypt(HWND hWnd) {
 	if (imagePath.empty()) {
@@ -83,29 +75,29 @@ void UIManager::ClickCrypt(HWND hWnd) {
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 	std::wstring wideImagePath = converter.from_bytes(imagePath);
 
-	std::wstring fileName = wideImagePath.substr(wideImagePath.find_last_of(L"\\") + 1); 
+	std::wstring fileName = wideImagePath.substr(wideImagePath.find_last_of(L"\\") + 1);
 	std::wstring baseName = fileName.substr(0, fileName.find_last_of(L"."));
 	std::wstring extension = fileName.substr(fileName.find_last_of(L"."));
 
-	std::wstring defaultFileName = baseName + L"_secret" + extension; 
+	std::wstring defaultFileName = baseName + L"_secret" + extension;
 
 	OPENFILENAME ofn;
-	WCHAR szFile[260];      
+	WCHAR szFile[260];
 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWnd;
 	ofn.lpstrFile = szFile;
-	ofn.lpstrFile[0] = '\0'; 
+	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof(szFile);
 	ofn.lpstrFilter = L"Images (*.bmp;*.jpg;*.jpeg;*.png)\0*.bmp;*.jpg;*.jpeg;*.png\0Tous les fichiers (*.*)\0*.*\0";
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = nullptr;
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = nullptr;
-	ofn.Flags = OFN_OVERWRITEPROMPT; 
+	ofn.Flags = OFN_OVERWRITEPROMPT;
 
-	wcscpy_s(szFile, defaultFileName.c_str()); 
+	wcscpy_s(szFile, defaultFileName.c_str());
 
 	if (GetSaveFileName(&ofn)) {
 		std::wstring filePath = ofn.lpstrFile;
@@ -114,7 +106,7 @@ void UIManager::ClickCrypt(HWND hWnd) {
 		std::wstring content = this->GetTextBoxContent();
 
 		int selectedIndex = SendMessage(hDropdown, CB_GETCURSEL, 0, 0);
-;		switch (selectedIndex)
+		;		switch (selectedIndex)
 		{
 		case 0: // NO FILTER
 			break;
@@ -145,11 +137,6 @@ void UIManager::ClickCrypt(HWND hWnd) {
 	}
 }
 
-
-
-
-
-
 INT_PTR UIManager::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
@@ -168,7 +155,6 @@ INT_PTR UIManager::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return (INT_PTR)FALSE;
 }
-
 
 LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HINSTANCE hInst)
 {
@@ -200,9 +186,8 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 				// Met à jour le texte du label
 				SetWindowTextW(hCharCountLabel, charCountText.c_str());
-				WCHAR buffer[256]; 
+				WCHAR buffer[256];
 				auto tt = GetWindowText(hCharCountLabel, buffer, sizeof(buffer) / sizeof(WCHAR)); // Récupérer le texte
-
 			}
 		}
 			  break;
@@ -230,9 +215,9 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
-		}
-		break;
-	case WM_NOTIFY: 
+	}
+	break;
+	case WM_NOTIFY:
 	{
 		if (((LPNMHDR)lParam)->idFrom == (UINT_PTR)hTextBox && ((LPNMHDR)lParam)->code == EN_CHANGE)
 		{
@@ -256,13 +241,13 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				this->ShowJournal();
 				break;
 			case 'D': // Ctrl + D
-				if (pImage != nullptr) 
+				if (pImage != nullptr)
 					this->ClickDecrypt(hWnd);
 				else
 					MessageBox(hWnd, L"Veuillez charger une image", L"Erreur", MB_OK | MB_ICONERROR);
 				break;
 			case 'C': // Ctrl + C
-				if (pImage != nullptr) 
+				if (pImage != nullptr)
 					this->ClickCrypt(hWnd);
 				else
 					MessageBox(hWnd, L"Veuillez charger une image", L"Erreur", MB_OK | MB_ICONERROR);
@@ -277,13 +262,11 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);
 
-
 		int rectWidth = 300;
 		int rectHeight = 200;
 
 		RECT clientRect;
 		GetClientRect(hWnd, &clientRect);
-
 
 		int windowWidth = clientRect.right - clientRect.left;
 		int windowHeight = clientRect.bottom - clientRect.top;
@@ -311,7 +294,7 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			int imgY = y + (rectHeight - newHeight) / 2;
 
 			Graphics graphics(hdc);
-			graphics.DrawImage(pImage, imgX, imgY, newWidth, newHeight); 
+			graphics.DrawImage(pImage, imgX, imgY, newWidth, newHeight);
 		}
 
 		EndPaint(hWnd, &ps);
@@ -325,9 +308,7 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
-	}
-
-
+}
 
 void UIManager::CreateButtons(HWND hWnd) {
 	// Décrypter
@@ -341,8 +322,8 @@ void UIManager::CreateButtons(HWND hWnd) {
 		30,  // Height
 		hWnd,  // Parent window
 		(HMENU)2,  // Button ID
-		nullptr,  
-		nullptr); 
+		nullptr,
+		nullptr);
 	// Crypter
 	hEncryptButton = CreateWindow(
 		L"BUTTON",  // Class name
@@ -354,8 +335,8 @@ void UIManager::CreateButtons(HWND hWnd) {
 		30,  // Height
 		hWnd,  // Parent window
 		(HMENU)3,  // Button ID
-		nullptr,  
-		nullptr); 
+		nullptr,
+		nullptr);
 }
 
 void UIManager::CreateDropdownAndButton(HWND hWnd)
@@ -369,9 +350,9 @@ void UIManager::CreateDropdownAndButton(HWND hWnd)
 		150, // Largeur
 		160, // Hauteur
 		hWnd, // Fenêtre parent
-		nullptr, 
-		nullptr, 
-		nullptr  
+		nullptr,
+		nullptr,
+		nullptr
 	);
 
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Aucun");
@@ -381,7 +362,6 @@ void UIManager::CreateDropdownAndButton(HWND hWnd)
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Flou");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nettete");
 	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Detection de contours");
-
 
 	// Sélectionner le premier élément par défaut
 	SendMessage(hDropdown, CB_SETCURSEL, 0, 0);
@@ -397,29 +377,25 @@ void UIManager::CreateDropdownAndButton(HWND hWnd)
 		30,  // Hauteur
 		hWnd, // Fenêtre parent
 		(HMENU)5, // ID du bouton pour WM_COMMAND
-		nullptr, 
-		nullptr  
+		nullptr,
+		nullptr
 	);
 }
-
 
 void UIManager::ShowControls() {
 	ShowWindow(hDecryptButton, SW_SHOW);
 	ShowWindow(hEncryptButton, SW_SHOW);
-	ShowWindow(hTextBox, SW_SHOW); 
-
-
+	ShowWindow(hTextBox, SW_SHOW);
 }
 
 void UIManager::HideControls() {
 	ShowWindow(hDecryptButton, SW_HIDE);
 	ShowWindow(hEncryptButton, SW_HIDE);
-	ShowWindow(hTextBox, SW_HIDE); 
+	ShowWindow(hTextBox, SW_HIDE);
 }
 
 void UIManager::ShowJournal()
 {
-
 	// Initialiser le journal s'il n'a pas déjà été créé
 	if (!journalManager->hJournalWnd)
 		JournalManager::Instance->Init(GetModuleHandle(nullptr), GetActiveWindow());
@@ -431,13 +407,11 @@ void UIManager::PrintText(LPCWSTR message)
 	SetWindowTextW(hTextBox, message);
 }
 
-
 std::wstring UIManager::GetTextBoxContent() {
-	WCHAR buffer[256]; 
+	WCHAR buffer[256];
 	GetWindowText(hTextBox, buffer, sizeof(buffer) / sizeof(WCHAR));
-	return std::wstring(buffer); 
+	return std::wstring(buffer);
 }
-
 
 void UIManager::CreateTextBox(HWND hWnd) {
 	// Créer la zone de texte
@@ -452,8 +426,8 @@ void UIManager::CreateTextBox(HWND hWnd) {
 		100,                // Height
 		hWnd,               // Parent window
 		(HMENU)4,          // ID de la zone de texte
-		nullptr,           
-		nullptr);          
+		nullptr,
+		nullptr);
 
 	// Limiter le nombre de caractères à 100
 	SendMessage(hTextBox, EM_SETLIMITTEXT, 100, 0);
@@ -469,21 +443,7 @@ void UIManager::CreateTextBox(HWND hWnd) {
 		200,                 // Width
 		20,                  // Height
 		hWnd,                // Parent window
-		nullptr,            
-		nullptr,           
-		nullptr);          
+		nullptr,
+		nullptr,
+		nullptr);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
