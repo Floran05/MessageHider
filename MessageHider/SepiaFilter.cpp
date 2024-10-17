@@ -1,4 +1,5 @@
 #include "SepiaFilter.h"
+#include "JournalManager.h"
 
 SepiaFilter::SepiaFilter()
 {
@@ -10,6 +11,8 @@ SepiaFilter::~SepiaFilter()
 
 void SepiaFilter::Apply(unsigned char* pixels, int width, int height, int bytesPerPixel)
 {
+	JournalManager::Instance->LogWrite(L"Applying Sepia filter");
+
 	const int size = width * height;
 	int targetPixel = 0;
 	for (int i = 0; i < size; ++i)

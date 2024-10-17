@@ -1,21 +1,26 @@
 #pragma once
 
-#include "Filter.h"
+#include "KernelBasedFilter.h"
 
 #include <vector>
 
 #define M_PI 3.1415926
 
-class BlurFilter : public Filter
+class BlurFilter : public KernelBasedFilter
 {
 public:
+	
 	BlurFilter();
 	virtual ~BlurFilter();
 
-public:
+protected:
 
-	std::vector<std::vector<float>> CreateKernel(const int size, const float sigma);
-	unsigned char ClampByte(int value);
+	int mKernelSize;
+	float mKernelSigma;
+
+	std::vector<std::vector<float>> GetKernel() override;
+
+public:
 
 	void Apply(unsigned char* pixels, int width, int height, int bytesPerPixel);
 

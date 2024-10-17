@@ -1,4 +1,5 @@
 #include "NegativeFilter.h"
+#include "JournalManager.h"
 
 NegativeFilter::NegativeFilter()
 {
@@ -10,6 +11,8 @@ NegativeFilter::~NegativeFilter()
 
 void NegativeFilter::Apply(unsigned char* pixels, int width, int height, int bytesPerPixel)
 {
+	JournalManager::Instance->LogWrite(L"Applying Negative filter");
+
 	const int size = width * height;
 	int targetPixel = 0;
 	for (int i = 0; i < size; ++i)
