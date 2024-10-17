@@ -206,9 +206,9 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				WCHAR buffer[256]; // Buffer pour stocker le contenu
 				auto tt = GetWindowText(hCharCountLabel, buffer, sizeof(buffer) / sizeof(WCHAR)); // Récupérer le texte
 
-				// Force uniquement le rafraîchissement du label
-				InvalidateRect(hCharCountLabel, nullptr, FALSE);
-				UpdateWindow(hCharCountLabel);
+				//// Force uniquement le rafraîchissement du label
+				//InvalidateRect(hCharCountLabel, nullptr, FALSE);
+				//UpdateWindow(hCharCountLabel);
 			}
 		}
 			  break;
