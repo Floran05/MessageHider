@@ -62,7 +62,7 @@ void FileManager::SetPath(const std::wstring& filename)
 std::string FileManager::Decrypt()
 {
 	std::string message;
-	if (mSelectedAlgorithm == ESteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
+	if (mSelectedAlgorithm == ESteganoAlgorithm::None || mSteganoAlgorithm == nullptr)
 	{
 		JournalManager::Instance->LogError(L"Can't decrypt message : no algorithm selected");
 		return message;
@@ -78,7 +78,7 @@ std::string FileManager::Decrypt()
 
 void FileManager::Encrypt(const std::string& message)
 {
-	if (mSelectedAlgorithm == ESteganoAlgorithm::None && mSteganoAlgorithm != nullptr)
+	if (mSelectedAlgorithm == ESteganoAlgorithm::None || mSteganoAlgorithm == nullptr)
 	{
 		JournalManager::Instance->LogError(L"Can't encrypt the message : no algorithm selected");
 		return;
