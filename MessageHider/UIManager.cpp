@@ -371,77 +371,88 @@ LRESULT UIManager::ProcessWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 void UIManager::CreateButtons(HWND hWnd) {
 	// Décrypter
-	hDecryptButton = CreateWindow(
-		L"BUTTON",
-		L"Décrypter",
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		50,  // Position X
-		100,  // Position Y
-		100,  // Width
-		30,  // Height
-		hWnd,  // Parent window
-		(HMENU)2,  // Button ID
-		nullptr,
-		nullptr);
+	if (hDecryptButton == nullptr) {
+		hDecryptButton = CreateWindow(
+			L"BUTTON",
+			L"Décrypter",
+			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+			50,  // Position X
+			100,  // Position Y
+			100,  // Width
+			30,  // Height
+			hWnd,  // Parent window
+			(HMENU)2,  // Button ID
+			nullptr,
+			nullptr);
+	}
+
 	// Crypter
-	hEncryptButton = CreateWindow(
-		L"BUTTON",  // Class name
-		L"Crypter",  // Button text
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
-		250,  // Position X
-		100,  // Position Y
-		100,  // Width
-		30,  // Height
-		hWnd,  // Parent window
-		(HMENU)3,  // Button ID
-		nullptr,
-		nullptr);
+	if (hEncryptButton == nullptr) {
+		hEncryptButton = CreateWindow(
+			L"BUTTON",  // Class name
+			L"Crypter",  // Button text
+			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles
+			250,  // Position X
+			100,  // Position Y
+			100,  // Width
+			30,  // Height
+			hWnd,  // Parent window
+			(HMENU)3,  // Button ID
+			nullptr,
+			nullptr);
+	}
+
 }
 
 void UIManager::CreateDropdownAndButton(HWND hWnd)
 {
-	hDropdown = CreateWindow(
-		L"COMBOBOX",   // Classe de la combobox
-		nullptr,       // Pas de texte initial
-		WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, // Styles
-		50,  // Position X
-		400, // Position Y
-		150, // Largeur
-		160, // Hauteur
-		hWnd, // Fenêtre parent
-		nullptr,
-		nullptr,
-		nullptr
-	);
+	if (hDropdown == nullptr) {
+		hDropdown = CreateWindow(
+			L"COMBOBOX",   // Classe de la combobox
+			nullptr,       // Pas de texte initial
+			WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, // Styles
+			50,  // Position X
+			400, // Position Y
+			150, // Largeur
+			160, // Hauteur
+			hWnd, // Fenêtre parent
+			nullptr,
+			nullptr,
+			nullptr
+		);
 
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Aucun");
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nuance de gris");
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Negatif");
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Sepia");
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Flou");
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nettete");
-	SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Detection de contours");
+		SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Aucun");
+		SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nuance de gris");
+		SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Negatif");
+		SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Sepia");
+		SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Flou");
+		SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Nettete");
+		SendMessage(hDropdown, CB_ADDSTRING, 0, (LPARAM)L"Detection de contours");
+
+	}
 
 	// Sélectionner le premier élément par défaut
 	SendMessage(hDropdown, CB_SETCURSEL, 0, 0);
 
+	if (hDropdownAlgo == nullptr) {
 
-	hDropdownAlgo = CreateWindow(
-		L"COMBOBOX",   // Classe de la combobox
-		nullptr,       // Pas de texte initial
-		WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, // Styles
-		200,  // Position X
-		400, // Position Y
-		150, // Largeur
-		160, // Hauteur
-		hWnd, // Fenêtre parent
-		nullptr,
-		nullptr,
-		nullptr
-	);
+		hDropdownAlgo = CreateWindow(
+			L"COMBOBOX",   // Classe de la combobox
+			nullptr,       // Pas de texte initial
+			WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, // Styles
+			200,  // Position X
+			400, // Position Y
+			150, // Largeur
+			160, // Hauteur
+			hWnd, // Fenêtre parent
+			nullptr,
+			nullptr,
+			nullptr
+		);
 
-	SendMessage(hDropdownAlgo, CB_ADDSTRING, 0, (LPARAM)L"Algo basique");
-	SendMessage(hDropdownAlgo, CB_ADDSTRING, 0, (LPARAM)L"Algo complexe");
+		SendMessage(hDropdownAlgo, CB_ADDSTRING, 0, (LPARAM)L"Algo basique");
+		SendMessage(hDropdownAlgo, CB_ADDSTRING, 0, (LPARAM)L"Algo complexe");
+	}
 
 	// Sélectionner le premier élément par défaut
 	SendMessage(hDropdownAlgo, CB_SETCURSEL, 0, 0);
