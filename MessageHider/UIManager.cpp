@@ -482,6 +482,11 @@ std::wstring UIManager::GetTextBoxContent() {
 }
 
 void UIManager::CreateTextBox(HWND hWnd) {
+	if (hTextBox != nullptr) {
+
+		SetWindowTextW(hTextBox, L"");
+		return;
+	}
 	// Créer la zone de texte
 	hTextBox = CreateWindowEx(
 		WS_EX_CLIENTEDGE,    // Style étendu
